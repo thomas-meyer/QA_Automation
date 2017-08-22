@@ -4,7 +4,6 @@ package AutomationFramework;
 
 
 import org.openqa.selenium.chrome.ChromeDriver; //Currently the program is set to run on a chrome browser
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -25,7 +24,7 @@ public class SeleniumRun{
 		System.setProperty("webdriver.chrome.driver",chromeDriveLoc);WebDriver driver = new ChromeDriver();
 		//We are now ready to rock'n'roll
 		//See Contact Class for documentation
-		Contact newReviewer= new Contact("Mrs","Robotic3");
+		Contact newReviewer= new Contact("Done","Good");
 		contactToPool(driver,newReviewer);
 		//driver.close();
 	}
@@ -310,7 +309,8 @@ public class SeleniumRun{
 				processed=true;
 			}
 		}
-		//IF YOU WANTED TO ATTACH A RESUME, HERE IS WHERE THE CODE WOULD GO
+		//Attaching a Resume, likely blank
+		
 		//The application has now been filled out and we submit
 		driver.findElement(By.xpath("//*[@title=\"Submit for Approval\"]")).click();
 		pause();
@@ -440,6 +440,18 @@ public class SeleniumRun{
 			//in debugging, this often meant
 			//we grabbed the wrong application
 		}
+		//Now we just need to clear the contact
+		//Enters the final phase
+		driver.findElement(By.xpath("//*[@title=\"Edit\"]")).click();
+		//Selects that the Contact is cleared with no restrictions
+		WebElement newSelect;Select useThis;
+		newSelect= driver.findElement(By.id("00Nt0000000SWhY"));
+		useThis=new Select(newSelect);
+		useThis.selectByIndex(1);
+		//Clicks that we reviewed the resume that wasn't included
+		driver.findElement(By.id("00Nt0000000SgVk")).click();
+		//Saving...we are finished now
+		driver.findElement(By.xpath("//*[@title=\"Save\"]")).click();
 	}
 	
 	//Logs out of Salesforce
@@ -479,4 +491,8 @@ public class SeleniumRun{
 
 	}
 
+	//this is for debudding purposes, it crashes the code
+	public static void crash(WebDriver driver) {
+		driver.findElement(By.partialLinkText("DNE-this really shouldnt exist")).click();
+	}
 }
