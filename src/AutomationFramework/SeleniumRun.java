@@ -4,12 +4,19 @@ package AutomationFramework;
 
 
 import org.openqa.selenium.chrome.ChromeDriver; //Currently the program is set to run on a chrome browser
+import org.openqa.selenium.remote.Augmenter;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -24,8 +31,10 @@ public class SeleniumRun{
 		System.setProperty("webdriver.chrome.driver",chromeDriveLoc);WebDriver driver = new ChromeDriver();
 		//We are now ready to rock'n'roll
 		//See Contact Class for documentation
-		Contact newReviewer= new Contact("Done","Good");
-		contactToPool(driver,newReviewer);
+		Contact newReviewer= new Contact("Photo","Genic");
+		Login(driver);
+		System.out.println(captureScreen(driver));
+		//contactToPool(driver,newReviewer);
 		//driver.close();
 	}
 	
@@ -88,6 +97,21 @@ public class SeleniumRun{
 			//on user preference
 			//NOTE: errors have been encountered below 100
 			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			//The Interruption Exception should never be thrown
+		}
+	}
+	
+	//Allows you to pause for a inputed amount of time
+	public static void pause(int num) {
+		//Pausing has two purposes.  Longer pauses allow
+		//for a spectator to comprehend the process.  Short
+		//pauses gives the web pages time to properly load
+		try {
+			//This is a hard-coded number and can be changed
+			//on user preference
+			//NOTE: errors have been encountered below 100
+			Thread.sleep(num*1000);
 		} catch (InterruptedException e) {
 			//The Interruption Exception should never be thrown
 		}
@@ -494,5 +518,24 @@ public class SeleniumRun{
 	//this is for debudding purposes, it crashes the code
 	public static void crash(WebDriver driver) {
 		driver.findElement(By.partialLinkText("DNE-this really shouldnt exist")).click();
+	}
+	
+	//Takes a screenshot.  There is an innate buffer time of 4 seconds
+	//just to make usre everything has loaded.  This may not always be
+	//enough time
+	public static String captureScreen(WebDriver driver) {
+		pause(4);
+	    String path;
+	    try {
+	        WebDriver augmentedDriver = new Augmenter().augment(driver);
+	        File source = ((TakesScreenshot)augmentedDriver).getScreenshotAs(OutputType.FILE);
+	        path = "./"+source.getName();//path name goes here
+	        FileUtils.copyFile(source, new File(path)); 
+	    }
+	    catch(IOException e) {
+	        path = "Failed to capture screenshot: " + e.getMessage();
+	    }
+	    pause();
+	    return path;
 	}
 }
