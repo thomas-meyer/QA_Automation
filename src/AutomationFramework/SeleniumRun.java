@@ -31,10 +31,8 @@ public class SeleniumRun{
 		System.setProperty("webdriver.chrome.driver",chromeDriveLoc);WebDriver driver = new ChromeDriver();
 		//We are now ready to rock'n'roll
 		//See Contact Class for documentation
-		Contact newReviewer= new Contact("Photo","Genic");
-		Login(driver);
-		System.out.println(captureScreen(driver));
-		//contactToPool(driver,newReviewer);
+		Contact newReviewer= new Contact("Todd","Harper");
+		contactToPool(driver,newReviewer);
 		//driver.close();
 	}
 	
@@ -96,7 +94,7 @@ public class SeleniumRun{
 			//This is a hard-coded number and can be changed
 			//on user preference
 			//NOTE: errors have been encountered below 100
-			Thread.sleep(100);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			//The Interruption Exception should never be thrown
 		}
@@ -347,7 +345,7 @@ public class SeleniumRun{
 	//param: reviewer= the relevant contact whose skills we are approving
 	public static void approveApp(WebDriver driver, Contact reviewer) {
 		//Link to Ayana Sufian's (skill assessor) salesforce pages
-		pause();
+		pause(5);
 		driver.navigate().to("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1");
 		pause();
 		//Logs in as the skill assessor
@@ -429,6 +427,7 @@ public class SeleniumRun{
 	//param: reviewer= the relevant contact whose COI we are approving
 	public static void OLCApprove(WebDriver driver, Contact reviewer) {
 		//Link to Ashanti Kimbrough's (OLC Staff) salesforce pages
+		pause(5);
 		driver.navigate().to("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1");
 		pause();
 		//Login as her
