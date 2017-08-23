@@ -23,7 +23,7 @@ public class Contact {
 		//randomly generates if the bot has experience or not
 		//this can be changed later
 		Random rand=new Random();
-		if(rand.nextInt(1)==1) {
+		if(rand.nextInt(2)==1) {
 			this.experience=true;
 		}else {
 			this.experience=false;
@@ -38,7 +38,7 @@ public class Contact {
 		//randomly generates if the bot has experience or not
 		//this can be changed later
 		Random rand=new Random();
-		if(rand.nextInt(1)==1) {
+		if(rand.nextInt(2)==1) {
 			this.experience=true;
 		}else {
 			this.experience=false;
