@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="C:/Users/Thomas Meyer/Documents/Selenium/lib/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas Meyer/Documents/Selenium/lib/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Thomas Meyer/Documents/Selenium/client-combined-3.5.0-nodeps.jar"/>
+	<classpathentry kind="con" path="org.testng.TESTNG_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
