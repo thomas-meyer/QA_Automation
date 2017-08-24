@@ -1,85 +1,122 @@
 package Tests;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-
-import AutomationFramework.SeleniumRun;
+import AutomationFramework.Contact;
+import AutomationFramework.SystemCommands;
 import Pages.contractorPage;
+import Pages.salesforcePage;
+import java.util.Random;
 
 public class ContractorTest {
   
 	public WebDriver driver;
+	public Contact testGuy;
+	
 	
 	@BeforeTest
 	public void setUp() {
-		String chromeDriveLoc="chromedriver.exe";
-		System.setProperty("webdriver.chrome.driver",chromeDriveLoc);
-		this.driver = new ChromeDriver();
-		SeleniumRun.Login(driver);
-		driver.navigate().to("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S");
-		SeleniumRun.pause();
-		driver.findElement(By.id("workWithPortalLabel")).click();
-		SeleniumRun.pause();
-		driver.findElement(By.partialLinkText("Log in to Comm")).click();
-		SeleniumRun.pause();
+		this.driver=SystemCommands.creatDriver();
+		salesforcePage page=new salesforcePage(driver);
+		page.Login();
+		page.LoginAsUser("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S");
+		Random rand=new Random();
+		String testGuyFirstName="Test";
+		String testGuyLastName="Guy"+rand.nextInt(10000000);
+		testGuy=new Contact(testGuyFirstName,testGuyLastName);
 	}
 	
-	@Test
+	
+	@Test (priority=0)
 	public void workingHomTabs() {
 		contractorPage testThis=new contractorPage(this.driver);
-		testThis.homeTabClick();
-		Assert.assertEquals(testThis.getTitle(), "Applicant");
+		testThis.buttonClick(testThis.home,"Applicant");
+		testThis.verifyTitle();
 	}
 	
-	@Test
+	@Test (priority=0)
 	public void workingOrgTab() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.orgTabClick();
-		Assert.assertEquals(testThis.getTitle(), "Organizations: Home ~ Applicant");
+		contractorPage page= new contractorPage(this.driver);
+		page.buttonClick(page.organizations,page.organizationsTitle);
+		page.verifyTitle();
 	}
 		
-	@Test
+	@Test (priority=0)
 	public void workingContactsTab() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.contactsTabClick();
-		Assert.assertEquals(testThis.getTitle(), "Contacts: Home ~ Applicant");
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.contacts,page.contactsTitle);
+		page.verifyTitle();
 	}
 	
-	@Test
+	@Test (priority=0)
 	public void workingRevProTab() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.revProTabClick();
-		Assert.assertEquals(testThis.getTitle(), "Reviewer Profiles: Home ~ Applicant");
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.reviewerProfiles,page.reviewerProfilesTitle);
+		page.verifyTitle();
 	}
 	
-	@Test
-	public void listOfRevList() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.revProTabClick();
-		testThis.goButtonClick();
-		Assert.assertEquals(testThis.getTitle(), "Reviewer Profiles ~ Applicant");
-	}
-	
-	@Test
-	public void newRevButton() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.revProTabClick();
-		testThis.goButtonClick();
-		testThis.createNewRevClick();
-		Assert.assertEquals(testThis.getTitle(), "New Reviewer Profile: Select Reviewer Profile Record Type ~ Applicant");
-		testThis.revProTabClick();
-		testThis.createNewRevClick();
-		Assert.assertEquals(testThis.getTitle(), "New Reviewer Profile: Select Reviewer Profile Record Type ~ Applicant");
-	}
-	
-	@Test
+	@Test (priority=0)
 	public void workingAppRevTeamTab() {
-		contractorPage testThis=new contractorPage(this.driver);
-		testThis.appRevTeamTabClick();
-		Assert.assertEquals(testThis.getTitle(), "Application Review Teams: Home ~ Applicant");
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.applicationReviewTeams,page.applicationReviewTeamsTitle);
+		page.verifyTitle();
 	}
+	
+	@Test (priority=1, dependsOnMethods= {"workingContactsTab"})
+	public void newContactButton() {
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.contacts);
+		page.buttonClick(page.newBut,page.newTitle);
+		page.verifyTitle();
+		page.buttonClick(page.contacts);
+		page.buttonClick(page.go,page.contactsListTitle);
+		page.buttonClick(page.newContact,page.newTitle);
+		page.verifyTitle();
+	}
+	
+
+	@Test (priority=2,dependsOnMethods= {"newContactButton"})
+	public void firstNameField() {
+		contractorPage page=new contractorPage(this.driver);
+		Assert.assertTrue(page.enterField(page.firstNameField, this.testGuy.getFirstName()));
+	}
+	
+	@Test (priority=2,dependsOnMethods= {"newContactButton"})
+	public void lastNameField() {
+		contractorPage page=new contractorPage(this.driver);
+		Assert.assertTrue(page.enterField(page.lastNameField, this.testGuy.getLastName()));
+	}
+	
+	@Test (priority=2,dependsOnMethods= {"newContactButton"})
+	public void emailField() {
+		contractorPage page=new contractorPage(this.driver);
+		Assert.assertTrue(page.enterField(page.emailField, this.testGuy.getEmail()));
+	}
+	
+	@Test (priority=2,dependsOnMethods= {"newContactButton"})
+	public void orgField() {
+		contractorPage page=new contractorPage(this.driver);
+		Assert.assertTrue(page.enterField(page.orgNameField, "F2 Solutions LLC"));
+	}
+	
+	@Test (priority=3,dependsOnMethods= {"newContactButton"})
+	public void saveContact() {
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.save,"Contact: "+this.testGuy.getFirstName()+" "+this.testGuy.getLastName()+" ~ Applicant");
+		page.verifyTitle();
+	}
+	
+	@Test (priority=4,dependsOnMethods= {"newContactButton","saveContact"})
+	public void enablePartnerUse() {
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.portal);
+		page.buttonClick(page.enableParnterUse);
+		page.verifyTitle();
+		page.selectList(page.profile, "Reviewer");
+		page.buttonClick(page.save,"Contact: "+this.testGuy.getFirstName()+" "+this.testGuy.getLastName()+" ~ Applicant");
+		page.verifyTitle();
+	}
+	
 }
