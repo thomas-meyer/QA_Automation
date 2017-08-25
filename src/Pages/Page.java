@@ -7,9 +7,15 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
+import AutomationFramework.SystemCommands;
+
 public abstract class Page {
 	static WebDriver driver;
 	String expectedTitle;
+	public By newBut=By.id("createNewButton");
+	public By sideBar=By.id("pinIndicator");
+	public By logout=By.xpath("//*[@title=\"Logout\"]");
+	public By user=By.id("userNavLabel");
 	
 	public String getTitle(){
 	        return Page.driver.getTitle();
@@ -42,10 +48,12 @@ public abstract class Page {
 		}
 	}
 	
-	public void buttonClick(By button) {
+	public boolean buttonClick(By button) {
 		if(this.elementExists(button)) {
 			driver.findElement(button).click();
+			return true;
 		}else {
+			return false;
 		}
 	}
 	
@@ -72,11 +80,37 @@ public abstract class Page {
 	public boolean selectList(By selectMenu,int selectOption) {
 		if(this.elementExists(selectMenu)) {
 			Select menu=new Select(driver.findElement(selectMenu));
-			menu.selectByIndex(selectOption);
-			return true;
+			try{
+				menu.selectByIndex(selectOption);
+				return true;
+			}catch(NoSuchElementException e) {
+				return false;
+			}
 		}else {
 			//maybe you tried to select something you couldn't
 			return false;
+		}
+	}
+	
+	public void Logout() {
+		//Page.driver.navigate().to(sandBoxURL);
+		this.buttonClick(this.user);
+		this.buttonClick(this.logout);
+	}
+	
+	public void accept() {
+		driver.switchTo().alert().accept();
+	}
+	
+	//Ensures that the "convenient" side-bar
+	//is minimized.
+	public void closeBar() {
+		try {
+			this.buttonClick(newBut);
+			this.buttonClick(this.sideBar);
+			SystemCommands.pause();
+		}catch(ElementNotVisibleException e) {
+			//If it isn't visible, we are good to go!
 		}
 	}
 	

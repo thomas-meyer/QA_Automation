@@ -21,7 +21,7 @@ public class ContractorTest {
 		this.driver=SystemCommands.creatDriver();
 		salesforcePage page=new salesforcePage(driver);
 		page.Login();
-		page.LoginAsUser("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S");
+		page.loginAsContractor("https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S");
 		Random rand=new Random();
 		String testGuyFirstName="Test";
 		String testGuyLastName="Guy"+rand.nextInt(10000000);
@@ -117,6 +117,17 @@ public class ContractorTest {
 		page.selectList(page.profile, "Reviewer");
 		page.buttonClick(page.save,"Contact: "+this.testGuy.getFirstName()+" "+this.testGuy.getLastName()+" ~ Applicant");
 		page.verifyTitle();
+	}
+	
+	@Test (priority=6)
+	public void allTogether() {
+		contractorPage page=new contractorPage(this.driver);
+		page.buttonClick(page.home,"Applicant");
+		page.verifyTitle();
+		Contact testAll=new Contact(new Random().nextInt(1000000));
+		page.contractorPageExe(testAll);
+		Assert.assertEquals(page.getTitle(), "Contact: "+testAll.getFirstName()+" "+testAll.getLastName()+" ~ Applicant");
+		
 	}
 	
 }

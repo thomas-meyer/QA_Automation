@@ -3,8 +3,6 @@ package Pages;
 import java.io.IOException;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
 import AutomationFramework.Contact;
@@ -16,14 +14,13 @@ public class salesforcePage extends Page{
 	public By usernameField=By.id("username");
 	public By passwordField=By.id("password");
 	public By login=By.id("Login");
+	public By login2=By.xpath("//*[@title=\"Login\"]");
 	public By portal=By.id("workWithPortalLabel");
 	public By userLog=By.partialLinkText("Log in to Comm");
 	public By logout=By.xpath("//*[@title=\"Logout\"]");
 	public By user=By.id("userNavLabel");
 	public By contacts=By.xpath("//*[@title=\"Contacts Tab\"]");
 	public By go=By.xpath("//*[@title=\"Go!\"]");
-	public By newBut=By.id("createNewButton");
-	public By sideBar=By.id("pinIndicator");
 	
 	public salesforcePage(WebDriver driverBeingUsed){
 		Page.driver=driverBeingUsed;
@@ -43,13 +40,13 @@ public class salesforcePage extends Page{
 		this.buttonClick(this.login);
 	}
 	
-	public void LoginAsUser(String userURL) {
+	public void loginAsContractor(String userURL) {
 		Page.driver.navigate().to(userURL);
 		this.buttonClick(this.portal);
 		this.buttonClick(this.userLog);
 	}
 	
-	public void LoginAsUser(Contact reviewer) {
+	public void loginAsReviewer(Contact reviewer) {
 		Page.driver.navigate().to(sandBoxURL);
 		this.buttonClick(this.contacts);
 		this.buttonClick(this.go);
@@ -59,21 +56,22 @@ public class salesforcePage extends Page{
 		this.buttonClick(this.userLog);
 	}
 	
+	public void loginAsUser(String userURL) {
+		Page.driver.navigate().to(userURL);
+		this.buttonClick(this.login2);
+	}
+	
 	public void findContact(String lookUp, String iterator) {
 		String letter=lookUp.charAt(0)+"";
 		this.buttonClick(By.linkText(letter));
 		SystemCommands.pause();
 		boolean foundName=false;
 		do {
-			try {
-				this.buttonClick(By.linkText(lookUp));
-				SystemCommands.pause();
+			SystemCommands.pause();
+			if(this.buttonClick(By.linkText(lookUp))) {
 				foundName=true;
-			}catch(NoSuchElementException e2) {
-				try{
-					this.buttonClick(By.partialLinkText(iterator));
-					SystemCommands.pause();
-				}catch(NoSuchElementException e3) {
+			}else {
+				if(!this.buttonClick(By.partialLinkText(iterator))) {
 					if(!"A".equals(letter)) {
 						this.buttonClick(By.linkText("A"));
 					}else {
@@ -81,30 +79,19 @@ public class salesforcePage extends Page{
 					}
 					this.buttonClick(By.linkText(letter));
 				}
-			}	
+			}
 		}while(!foundName);
 	}
 	
-	public void Logout() {
-		Page.driver.navigate().to(sandBoxURL);
-		this.buttonClick(this.user);
-		this.buttonClick(this.logout);
-	}
+
 	
-	//Ensures that the "convenient" side-bar
-	//is minimized.
-	public void closeBar(WebDriver driver) {
-		try {
-			this.buttonClick(newBut);
-			this.buttonClick(this.sideBar);
-			SystemCommands.pause();
-		}catch(ElementNotVisibleException e) {
-			//If it isn't visible, we are good to go!
-		}
-	}
+
 	
 	public void refreshUser() {
 		Logout();
+		SystemCommands.pause(1);
+		driver.navigate().to(sandBoxURL);
+		SystemCommands.pause(1);
 		Login();
 	}
 }

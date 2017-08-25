@@ -22,6 +22,7 @@ public class reviewerPage extends Page{
 	public By newRevPro=By.xpath("//*[@title=\"Create New Reviewer Profile\"]");
 	public By continueBut=By.xpath("//*[@title=\"Continue\"]");
 	public By save=By.xpath("//*[@title=\"Save\"]");
+	public By submit=By.xpath("//*[@title=\"Submit for Approval\"]");
 	public By recordType=By.id("p3");
 	public By formReviewProg=By.xpath("//*[@title=\"Review Program - Available\"]");
 	public By add=By.xpath("//*[@title=\"Add\"]");
@@ -29,7 +30,12 @@ public class reviewerPage extends Page{
 	public By prevExp=By.name("00N35000000aO61");
 	public By name=By.id("CF00Nt0000000SWKG");
 	public By terms=By.name("00Nt0000000SgVo");
-	
+	public By app=By.partialLinkText("REV-");//This is sloppy
+	public By addCOI=By.xpath("//*[@title=\"New Applicant List – Identify Conflicts\"]");
+	public By correctCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id42");
+	public By readCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id41");
+	public By exitCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id38");
+	public By saveCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id37");
 	
 	public reviewerPage(WebDriver driverBeingUsed){
 		Page.driver=driverBeingUsed;
@@ -55,9 +61,22 @@ public class reviewerPage extends Page{
 		while(!processed) {
 			SystemCommands.pause();
 			this.buttonClick(this.save);
-			if(this.checkTitle("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
+			if(!this.checkTitle("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
 				processed=true;
 			}
 		}
+	}
+	public void addCOI(Contact reviewer) {
+		this.buttonClick(this.reviewerProfiles);
+		this.closeBar();
+		this.buttonClick(this.app);
+		this.buttonClick(this.addCOI);
+		this.selectList(this.correctCOI, 2);
+		this.selectList(this.readCOI, 1);
+		this.buttonClick(this.saveCOI);
+		this.buttonClick(this.exitCOI);
+		this.buttonClick(this.submit);
+		this.accept();
+		
 	}
 }
