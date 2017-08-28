@@ -1,20 +1,18 @@
 //This package should contain Selenium add-ons
 package AutomationFramework;
 
-
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver; //Currently the program is set to run on a chrome browser
-
 import Pages.OLCPage;
 import Pages.contractorPage;
 import Pages.loginPage;
 import Pages.reviewerPage;
 import Pages.skillAssessorPage;
 
-//This is the name of your class
+
 public class SeleniumRun{
 	
+	//This is what will actally run when you run the code
 	public static void main(String[] args) throws InterruptedException {
 		//The driver should be in the project 
 		//folder, else hard code your driver location
@@ -23,7 +21,7 @@ public class SeleniumRun{
 		WebDriver driver = new ChromeDriver();
 		//We are now ready to rock'n'roll
 		//See Contact Class for documentation
-		Contact newReviewer= new Contact("New","Frame6");
+		Contact newReviewer= new Contact("Should","Complete7");
 		contactToPool(driver,newReviewer);
 		//driver.close();
 	}
@@ -36,29 +34,25 @@ public class SeleniumRun{
 		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
 		String skillAssessorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1";//Ayana Sufian
 		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
-		String F2orgURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00135000003Dfsv";
-		loginPage lPage;
-		contractorPage cPage;
-		reviewerPage rPage;
-		skillAssessorPage sPage;
-		OLCPage olcPage;
+		String F2orgConURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/003?rlid=RelatedContactList&id=00135000003Dfsv";
+		loginPage lPage;contractorPage cPage;reviewerPage rPage;skillAssessorPage sPage;OLCPage olcPage;int pauseTime=0;
+		//Logs into the sandbox
 		lPage=new loginPage(driver, sandBoxURL);
-		//cPage = new contractorPage(driver,contractorURL);
-		//cPage.createReviewer(reviewer);
-		//lPage.changeUser();
-		//rPage=new reviewerPage(driver, reviewer);
-		//rPage.createProfile(reviewer);
-		//lPage.changeUser();
-		sPage=new skillAssessorPage(driver, skillAssessorURL);
-		sPage.approveApp(reviewer);
+		//Everything below here is the process
+		cPage = new contractorPage(driver,contractorURL);
+		cPage.createReviewer(reviewer,pauseTime);
 		lPage.changeUser();
 		rPage=new reviewerPage(driver, reviewer);
-		rPage.addCOI(reviewer);
+		rPage.createProfile(reviewer,pauseTime);
+		lPage.changeUser();
+		sPage=new skillAssessorPage(driver, skillAssessorURL);
+		sPage.approveApp(reviewer,pauseTime);
+		lPage.changeUser();
+		rPage=new reviewerPage(driver, reviewer);
+		rPage.addCOI(reviewer,pauseTime);
 		lPage.changeUser();
 		olcPage=new OLCPage(driver, olcStaffURL);
-		driver.navigate().to(F2orgURL);
-		olcPage.approveApp(reviewer);
-		//...
+		olcPage.approveApp(reviewer,F2orgConURL,pauseTime);
 		lPage.logout();
 	}
 	

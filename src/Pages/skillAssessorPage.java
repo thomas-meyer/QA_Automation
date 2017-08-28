@@ -23,16 +23,21 @@ public class skillAssessorPage extends Page {
 		this.login(URL);
 	}
 	
-	public void approveApp(Contact reviewer) {
-		SystemCommands.pause(5);
+	public void approveApp(Contact reviewer, int pauseTime) {
+		SystemCommands.pause(pauseTime+2);
 		this.buttonClick(this.contacts);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.go);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.revName);
+		SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(By.linkText(letter));
 		SystemCommands.pause();
 		boolean foundName=false;
+		//Potential Infinite Loop
 		do {
 			SystemCommands.pause();
 			if(this.buttonClick(By.linkText(lookUp))) {
@@ -45,17 +50,22 @@ public class skillAssessorPage extends Page {
 						this.buttonClick(By.linkText("B"));
 					}
 					this.buttonClick(By.linkText(letter));
+					SystemCommands.pause(pauseTime);
 				}
 			}
 		}while(!foundName);
+		SystemCommands.pause(pauseTime);
 		this.closeBar();
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.app);
+		SystemCommands.pause(pauseTime);
 		if(this.buttonClick(this.approveReject)) {
+			SystemCommands.pause(pauseTime);
 			this.buttonClick(this.approve);
+			SystemCommands.pause(pauseTime);
 		}else{
-			//pre-approved?
+			SystemCommands.pause(2);
 		}
-		
 	}
 
 	@Override

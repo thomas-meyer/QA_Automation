@@ -24,10 +24,16 @@ public class loginPage extends Page{
 	}
 	
 	public void changeUser() {
+		SystemCommands.pause(1);
 		this.logout();
 		SystemCommands.pause(1);
 		this.login(this.sandboxURL);
-		SystemCommands.pause(1);
+		SystemCommands.pause(2);
+		this.expectedTitle="Organizations: Home ~ Salesforce - Enterprise Edition";
+		//Potential Infinite Loop
+		if(!Page.driver.getTitle().equals(this.expectedTitle)) {
+			this.login(this.sandboxURL);
+		}
 	}
 	
 	public void logout() {

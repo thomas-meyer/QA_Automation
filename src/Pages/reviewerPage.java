@@ -49,11 +49,14 @@ public class reviewerPage extends Page{
 		this.login(reviewer);
 	}
 	
-	public void createProfile(Contact reviewer) {
+	public void createProfile(Contact reviewer, int pauseTime) {
 		this.buttonClick(this.reviewerProfiles);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.newRevPro);
+		SystemCommands.pause(pauseTime);
 		this.selectList(this.recordType, 2);
 		this.buttonClick(this.continueBut);
+		SystemCommands.pause(pauseTime);
 		this.selectList(this.formReviewProg, 0);
 		this.buttonClick(this.add);
 		this.selectList(this.fiscalYear, 2);
@@ -64,6 +67,7 @@ public class reviewerPage extends Page{
 		}
 		this.enterField(this.name,reviewer.getLastName()+" "+reviewer.getFirstName());
 		this.selectList(this.terms, 1);
+		SystemCommands.pause(pauseTime);
 		Boolean processed=false;
 		while(!processed) {
 			SystemCommands.pause();
@@ -72,17 +76,28 @@ public class reviewerPage extends Page{
 				processed=true;
 			}
 		}
+		SystemCommands.pause(pauseTime);
+		this.buttonClick(this.submit);
+		SystemCommands.pause(pauseTime);
+		this.accept();
+		SystemCommands.pause(pauseTime);
 	}
-	public void addCOI(Contact reviewer) {
+	public void addCOI(Contact reviewer,int pauseTime) {
 		this.buttonClick(this.reviewerProfiles);
+		SystemCommands.pause(pauseTime);
 		this.closeBar();
 		this.buttonClick(this.app);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.addCOI);
 		this.selectList(this.correctCOI, 2);
 		this.selectList(this.readCOI, 1);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.saveCOI);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.exitCOI);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.submit);
+		SystemCommands.pause(pauseTime);
 		this.accept();
 		
 	}
@@ -100,6 +115,7 @@ public class reviewerPage extends Page{
 			this.buttonClick(By.linkText(letter));
 			SystemCommands.pause();
 			boolean foundName=false;
+			//Potential Infinite Loop
 			do {
 				SystemCommands.pause();
 				if(this.buttonClick(By.linkText(lookUp))) {

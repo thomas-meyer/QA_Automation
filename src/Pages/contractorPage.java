@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import AutomationFramework.Contact;
+import AutomationFramework.SystemCommands;
 
 public class contractorPage extends Page{
 
@@ -50,18 +51,26 @@ public class contractorPage extends Page{
 		this.login(contractorURL);
 	}
 	
-	public void createReviewer(Contact newContact){
+	public void createReviewer(Contact newContact, int pauseTime){
 		this.buttonClick(this.contacts);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.newBut);
+		SystemCommands.pause(pauseTime);
 		this.enterField(this.firstNameField,newContact.getFirstName());
 		this.enterField(this.lastNameField,newContact.getLastName());
 		this.enterField(this.emailField,newContact.getEmail());
 		this.enterField(this.orgNameField,"F2 Solutions LLC");
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.portal);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.enableParnterUse);
-		this.selectList(this.profile, "Reviewer");		
+		SystemCommands.pause(pauseTime);
+		this.selectList(this.profile, "Reviewer");
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
+		SystemCommands.pause(pauseTime);
 	}
 
 	@Override

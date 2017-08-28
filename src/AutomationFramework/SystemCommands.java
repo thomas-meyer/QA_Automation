@@ -41,16 +41,15 @@ public class SystemCommands {
 	
 	//Allows you to pause for a inputed amount of time
 	public static void pause(int num) {
-		//Pausing has two purposes.  Longer pauses allow
-		//for a spectator to comprehend the process.  Short
-		//pauses gives the web pages time to properly load
-		try {
-			//This is a hard-coded number and can be changed
-			//on user preference
-			//NOTE: errors have been encountered below 100
-			Thread.sleep(num*1000);
-		} catch (InterruptedException e) {
-			//The Interruption Exception should never be thrown
+		if(num!=0) {
+			try {
+				//This is a hard-coded number and can be changed
+				//on user preference
+				//NOTE: errors have been encountered below 100
+				Thread.sleep(num*1000);
+			} catch (InterruptedException e) {
+				//The Interruption Exception should never be thrown
+			}
 		}
 	}
 	

@@ -7,9 +7,8 @@ import AutomationFramework.Contact;
 import AutomationFramework.SystemCommands;
 
 public class OLCPage extends Page{
-	public By revList=By.partialLinkText("(50+)");//sloppy
 	public By app=By.partialLinkText("REV-");
-	public By approveReject=By.linkText("Approve/Reject");
+	public By approveReject=By.linkText("Approve / Reject");
 	public By approveApp=By.xpath("//*[@title=\"Approve\"]");
 	public By edit=By.xpath("//*[@title=\"Edit\"]");
 	public By clearedNoRestric=By.id("00Nt0000000SWhY");
@@ -22,13 +21,15 @@ public class OLCPage extends Page{
 	}
 
 
-	public void approveApp(Contact reviewer) {
-		this.buttonClick(this.revList);
+	public void approveApp(Contact reviewer,String contactListURL, int pauseTime) {
+		driver.navigate().to(contactListURL);
+		SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
 		this.buttonClick(By.linkText(letter));
 		SystemCommands.pause();
 		boolean foundName=false;
+		//Potential Infinite Loop
 		do {
 			SystemCommands.pause();
 			if(this.buttonClick(By.linkText(lookUp))) {
@@ -44,14 +45,22 @@ public class OLCPage extends Page{
 				}
 			}
 		}while(!foundName);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.app);
+		SystemCommands.pause(pauseTime);
 		if(this.buttonClick(this.approveReject)) {
+			SystemCommands.pause(pauseTime);
 			this.buttonClick(this.approveApp);
+			SystemCommands.pause(pauseTime);
 		}
 		this.buttonClick(this.edit);
-		this.selectList(this.clearedNoRestric, 0);
+		SystemCommands.pause(pauseTime);
+		this.selectList(this.clearedNoRestric, 1);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.resume);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
+		SystemCommands.pause(pauseTime);
 	}
 
 
