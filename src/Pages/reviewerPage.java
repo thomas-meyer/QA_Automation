@@ -1,10 +1,14 @@
 package Pages;
 
+import java.io.PrintStream;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 
 import AutomationFramework.Contact;
+import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
 
 public class reviewerPage extends Page{
@@ -51,12 +55,12 @@ public class reviewerPage extends Page{
 	
 	public void createProfile(Contact reviewer, int pauseTime) {
 		this.buttonClick(this.reviewerProfiles);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.newRevPro);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.selectList(this.recordType, 2);
 		this.buttonClick(this.continueBut);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.selectList(this.formReviewProg, 0);
 		this.buttonClick(this.add);
 		this.selectList(this.fiscalYear, 2);
@@ -67,39 +71,47 @@ public class reviewerPage extends Page{
 		}
 		this.enterField(this.name,reviewer.getLastName()+" "+reviewer.getFirstName());
 		this.selectList(this.terms, 1);
-		SystemCommands.pause(pauseTime);
-		Boolean processed=false;
-		while(!processed) {
-			SystemCommands.pause();
+			SystemCommands.pause(pauseTime);
+		Boolean processed=false;int infCount=0;
+		while(!processed & infCount!=300) {
+				SystemCommands.pause(1);
 			this.buttonClick(this.save);
 			if(!this.checkTitle("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
 				processed=true;
 			}
+			infCount++;
 		}
-		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.submit);
-		SystemCommands.pause(pauseTime);
-		this.accept();
-		SystemCommands.pause(pauseTime);
+		if(infCount!=300) {
+				SystemCommands.pause(pauseTime);
+			this.buttonClick(this.submit);
+				SystemCommands.pause(pauseTime);
+			this.accept();
+				SystemCommands.pause(pauseTime);
+		}else {
+			System.out.println("System took over five minutes to register reviewers name.  This is too long");
+		}
 	}
 	public void addCOI(Contact reviewer,int pauseTime) {
 		this.buttonClick(this.reviewerProfiles);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.closeBar();
 		this.buttonClick(this.app);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.addCOI);
 		this.selectList(this.correctCOI, 2);
 		this.selectList(this.readCOI, 1);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.saveCOI);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.exitCOI);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.submit);
-		SystemCommands.pause(pauseTime);
-		this.accept();
-		
+			SystemCommands.pause(pauseTime);
+		try {
+			this.accept();
+		}catch(NoAlertPresentException e) {
+			System.out.println("After Submission, No Accept Pop-Up found.");
+		}
 	}
 
 	@Override
@@ -107,17 +119,17 @@ public class reviewerPage extends Page{
 		if(loginInfo instanceof Contact) {
 			this.buttonClick(By.xpath("//*[@title=\"Contacts Tab\"]"));
 			this.buttonClick(By.xpath("//*[@title=\"Go!\"]"));
-			SystemCommands.pause();
+				SystemCommands.pause();
 			String lookUp=((Contact) loginInfo).getLastName()+", "+((Contact) loginInfo).getFirstName();
-			this.buttonClick(this.portal);
-			this.buttonClick(this.userLog);
 			String letter=lookUp.charAt(0)+"";
 			this.buttonClick(By.linkText(letter));
-			SystemCommands.pause();
-			boolean foundName=false;
-			//Potential Infinite Loop
-			do {
 				SystemCommands.pause();
+			boolean foundName=false;int infCount=0;
+			//Potential Infinite Loop
+			PrintStream original = System.out;
+			System.setOut(new NullPrintStream());
+			do {
+					SystemCommands.pause();
 				if(this.buttonClick(By.linkText(lookUp))) {
 					foundName=true;
 				}else {
@@ -130,17 +142,23 @@ public class reviewerPage extends Page{
 						this.buttonClick(By.linkText(letter));
 					}
 				}
-			}while(!foundName);
+				infCount++;
+			}while(!foundName & infCount<100);
+			System.setOut(original);
+			if(infCount!=100) {
+				this.buttonClick(this.portal);
+				this.buttonClick(this.userLog);
+			}else {
+				System.out.println("System believed it was in an infinite loop an exited from finding \""+lookUp+"\"");
+			}
 		}
-		this.buttonClick(this.portal);
-		this.buttonClick(this.userLog);
 	}
 	
 	public void closeBar() {
 		try {
 			this.buttonClick(newBut);
 			this.buttonClick(this.sideBar);
-			SystemCommands.pause();
+				SystemCommands.pause();
 		}catch(ElementNotVisibleException e) {
 			//If it isn't visible, we are good to go!
 		}

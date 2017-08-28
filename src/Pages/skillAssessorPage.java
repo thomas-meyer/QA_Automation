@@ -1,16 +1,19 @@
 package Pages;
 
+import java.io.PrintStream;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 import AutomationFramework.Contact;
+import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
 
 public class skillAssessorPage extends Page {
 
 	public By contacts=By.linkText("Contacts");
 	public By go=By.xpath("//*[@title=\"Go!\"]");
-	public By revName=By.xpath("//*[@title=\"Reviewer Name\"]");
+	public By revName=By.xpath("//*[@title=\"Name\"]");
 	public By app=By.partialLinkText("REV-");
 	public By approveReject=By.linkText("Approve / Reject");
 	public By approve=By.xpath("//*[@title=\"Approve\"]");
@@ -26,20 +29,22 @@ public class skillAssessorPage extends Page {
 	public void approveApp(Contact reviewer, int pauseTime) {
 		SystemCommands.pause(pauseTime+2);
 		this.buttonClick(this.contacts);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.go);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.revName);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(By.linkText(letter));
-		SystemCommands.pause();
-		boolean foundName=false;
-		//Potential Infinite Loop
-		do {
 			SystemCommands.pause();
+		boolean foundName=false;int infCount=0;
+		//Potential Infinite Loop
+		PrintStream original = System.out;
+		System.setOut(new NullPrintStream());
+		do {
+				SystemCommands.pause();
 			if(this.buttonClick(By.linkText(lookUp))) {
 				foundName=true;
 			}else {
@@ -50,21 +55,27 @@ public class skillAssessorPage extends Page {
 						this.buttonClick(By.linkText("B"));
 					}
 					this.buttonClick(By.linkText(letter));
-					SystemCommands.pause(pauseTime);
+						SystemCommands.pause(pauseTime);
 				}
 			}
-		}while(!foundName);
-		SystemCommands.pause(pauseTime);
-		this.closeBar();
-		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.app);
-		SystemCommands.pause(pauseTime);
-		if(this.buttonClick(this.approveReject)) {
-			SystemCommands.pause(pauseTime);
-			this.buttonClick(this.approve);
-			SystemCommands.pause(pauseTime);
-		}else{
-			SystemCommands.pause(2);
+			infCount++;
+		}while(!foundName & infCount<100);
+		System.setOut(original);
+		if(infCount!=100) {
+				SystemCommands.pause(pauseTime);
+			this.closeBar();
+				SystemCommands.pause(pauseTime);
+			this.buttonClick(this.app);
+				SystemCommands.pause(pauseTime);
+			if(this.buttonClick(this.approveReject)) {
+					SystemCommands.pause(pauseTime);
+				this.buttonClick(this.approve);
+					SystemCommands.pause(pauseTime);
+			}else{
+					SystemCommands.pause(2);
+			}
+		}else {
+			System.out.println("System believed it was in an infinite loop an exited from Skill Assessment Approval Process");
 		}
 	}
 
@@ -82,7 +93,7 @@ public class skillAssessorPage extends Page {
 		try {
 			this.buttonClick(newBut);
 			this.buttonClick(this.sideBar);
-			SystemCommands.pause();
+				SystemCommands.pause();
 		}catch(ElementNotVisibleException e) {
 			//If it isn't visible, we are good to go!
 		}

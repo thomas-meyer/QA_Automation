@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
@@ -32,8 +33,10 @@ public abstract class Page {
 			Page.driver.findElement(element);
 			return true;
 		}catch(NoSuchElementException noEl) {
+			System.out.print("FAILED TO FIND: ("+element.toString()+")");
 			return false;
 		}catch(ElementNotVisibleException hidEl) {
+			System.out.print("HIDDEN ELEMENT: ("+element.toString()+") ");
 			return false;
 		}
 	}
@@ -43,6 +46,7 @@ public abstract class Page {
 			driver.findElement(button).click();
 			this.expectedTitle=titleChange;
 		}else {
+			System.out.println(" \"clickable button\"");
 		}
 	}
 	
@@ -51,41 +55,54 @@ public abstract class Page {
 			driver.findElement(button).click();
 			return true;
 		}else {
+			System.out.println(" \"clickable button\"");
 			return false;
 		}
 	}
 	
 	public boolean enterField(By field, String input) {
 		if(this.elementExists(field)) {
-			driver.findElement(field).sendKeys(input);
-			return true;
+			try {
+				driver.findElement(field).sendKeys(input);
+				return true;
+			}catch(UnsupportedCommandException e) {
+				System.out.println("FAILED TO ENTER information into the field: ("+field.toString()+")");
+				return false;
+			}
 		}else {
+			System.out.println(" \"field\"");
 			return false;
 		}
 	}
 	
 	public boolean selectList(By selectMenu,String selectOption) {
 		if(this.elementExists(selectMenu)) {
-			Select menu=new Select(driver.findElement(By.id("Profile")));
-			menu.selectByVisibleText("Reviewer");
-			return true;
+			try {
+				Select menu=new Select(driver.findElement(By.id("Profile")));
+				menu.selectByVisibleText("Reviewer");
+				return true;
+			}catch(NoSuchElementException e) {
+				System.out.println("FAILED TO SELECT the value \""+selectOption+"\" from the picklist ("+selectMenu.toString()+")");
+				return false;
+			}
 		}else {
-			//maybe you tried to select something you couldn't
+			System.out.println(" \"picklist\"");
 			return false;
 		}
 	}
 	
 	public boolean selectList(By selectMenu,int selectOption) {
 		if(this.elementExists(selectMenu)) {
-			Select menu=new Select(driver.findElement(selectMenu));
 			try{
+				Select menu=new Select(driver.findElement(selectMenu));
 				menu.selectByIndex(selectOption);
 				return true;
 			}catch(NoSuchElementException e) {
+				System.out.println("FAILED TO SELECT the "+Integer.toString(selectOption)+"value from the picklist ("+selectMenu.toString()+")");
 				return false;
 			}
 		}else {
-			//maybe you tried to select something you couldn't
+			System.out.println(" \"picklist\"");
 			return false;
 		}
 	}

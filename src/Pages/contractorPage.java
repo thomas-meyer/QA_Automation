@@ -24,10 +24,12 @@ public class contractorPage extends Page{
 	public By applicationReviewTeams=By.linkText("Application Review Teams");
 	public String applicationReviewTeamsTitle="Application Review Teams: Home ~ Applicant";
 	
+	//From Contacts Tab
 	public By newContact=By.xpath("//*[@title=\"New Contact\"]");
 	public By newBut=By.xpath("//*[@title=\"New\"]");
 	public String newTitle="Contact Edit: New Contact ~ Applicant";
 	
+	//From New Contact Page
 	public By go=By.xpath("//*[@title=\"Go!\"]");
 	public String contactsListTitle="Contacts ~ Applicant";
 	//
@@ -53,24 +55,24 @@ public class contractorPage extends Page{
 	
 	public void createReviewer(Contact newContact, int pauseTime){
 		this.buttonClick(this.contacts);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.newBut);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.enterField(this.firstNameField,newContact.getFirstName());
 		this.enterField(this.lastNameField,newContact.getLastName());
 		this.enterField(this.emailField,newContact.getEmail());
 		this.enterField(this.orgNameField,"F2 Solutions LLC");
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.portal);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.enableParnterUse);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.selectList(this.profile, "Reviewer");
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 	}
 
 	@Override
@@ -80,8 +82,9 @@ public class contractorPage extends Page{
 			Page.driver.navigate().to((String) loginInfo);
 			this.buttonClick(this.portal);
 			this.buttonClick(this.userLog);
+		}else {
+			System.out.println("\"ERROR: contractor URL is not entered as a String-This error should never be reached");
 		}
-		
 	}
 
 }

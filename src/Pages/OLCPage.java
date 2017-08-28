@@ -1,9 +1,12 @@
 package Pages;
 
+import java.io.PrintStream;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import AutomationFramework.Contact;
+import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
 
 public class OLCPage extends Page{
@@ -23,15 +26,17 @@ public class OLCPage extends Page{
 
 	public void approveApp(Contact reviewer,String contactListURL, int pauseTime) {
 		driver.navigate().to(contactListURL);
-		SystemCommands.pause(pauseTime);
+			SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
 		this.buttonClick(By.linkText(letter));
-		SystemCommands.pause();
-		boolean foundName=false;
-		//Potential Infinite Loop
-		do {
 			SystemCommands.pause();
+		boolean foundName=false;int infCount=0;
+		//Potential Infinite Loop
+		PrintStream original = System.out;
+		System.setOut(new NullPrintStream());
+		do {
+				SystemCommands.pause();
 			if(this.buttonClick(By.linkText(lookUp))) {
 				foundName=true;
 			}else {
@@ -44,23 +49,29 @@ public class OLCPage extends Page{
 					this.buttonClick(By.linkText(letter));
 				}
 			}
-		}while(!foundName);
-		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.app);
-		SystemCommands.pause(pauseTime);
-		if(this.buttonClick(this.approveReject)) {
-			SystemCommands.pause(pauseTime);
-			this.buttonClick(this.approveApp);
-			SystemCommands.pause(pauseTime);
+			infCount++;
+		}while(!foundName & infCount<100);
+		System.setOut(original);
+		if(infCount!=100) {
+				SystemCommands.pause(pauseTime);
+			this.buttonClick(this.app);
+				SystemCommands.pause(pauseTime);
+			if(this.buttonClick(this.approveReject)) {
+					SystemCommands.pause(pauseTime);
+				this.buttonClick(this.approveApp);
+					SystemCommands.pause(pauseTime);
+			}
+			this.buttonClick(this.edit);
+				SystemCommands.pause(pauseTime);
+			this.selectList(this.clearedNoRestric, 1);
+				SystemCommands.pause(pauseTime);
+			this.buttonClick(this.resume);
+				SystemCommands.pause(pauseTime);
+			this.buttonClick(this.save);
+				SystemCommands.pause(pauseTime);
+		}else {
+			System.out.println("System believed it was in an infinite loop an exited from OLC Approval Process");
 		}
-		this.buttonClick(this.edit);
-		SystemCommands.pause(pauseTime);
-		this.selectList(this.clearedNoRestric, 1);
-		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.resume);
-		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.save);
-		SystemCommands.pause(pauseTime);
 	}
 
 
