@@ -1,6 +1,7 @@
 package Pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebDriver;
 
 import AutomationFramework.Contact;
@@ -19,6 +20,8 @@ public class reviewerPage extends Page{
 	public By scorecards=By.linkText("Scorecards");
 	public String scorecardsTitle="Scorecards: Home ~ Applicant";
 	
+	public By portal=By.id("workWithPortalLabel");
+	public By userLog=By.partialLinkText("Log in to Comm");
 	public By newRevPro=By.xpath("//*[@title=\"Create New Reviewer Profile\"]");
 	public By continueBut=By.xpath("//*[@title=\"Continue\"]");
 	public By save=By.xpath("//*[@title=\"Save\"]");
@@ -36,13 +39,17 @@ public class reviewerPage extends Page{
 	public By readCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id41");
 	public By exitCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id38");
 	public By saveCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id37");
+	public By newBut=By.id("createNewButton");
+	public By sideBar=By.id("pinIndicator");
 	
-	public reviewerPage(WebDriver driverBeingUsed){
+	public reviewerPage(WebDriver driverBeingUsed, Contact reviewer){
 		Page.driver=driverBeingUsed;
+		//refresh
 		this.expectedTitle="Applicant";
+		this.login(reviewer);
 	}
 	
-	public void reviewerProfile(Contact reviewer) {
+	public void createProfile(Contact reviewer) {
 		this.buttonClick(this.reviewerProfiles);
 		this.buttonClick(this.newRevPro);
 		this.selectList(this.recordType, 2);
@@ -78,5 +85,48 @@ public class reviewerPage extends Page{
 		this.buttonClick(this.submit);
 		this.accept();
 		
+	}
+
+	@Override
+	public void login(Object loginInfo) {
+		if(loginInfo instanceof Contact) {
+			this.buttonClick(By.xpath("//*[@title=\"Contacts Tab\"]"));
+			this.buttonClick(By.xpath("//*[@title=\"Go!\"]"));
+			SystemCommands.pause();
+			String lookUp=((Contact) loginInfo).getLastName()+", "+((Contact) loginInfo).getFirstName();
+			this.buttonClick(this.portal);
+			this.buttonClick(this.userLog);
+			String letter=lookUp.charAt(0)+"";
+			this.buttonClick(By.linkText(letter));
+			SystemCommands.pause();
+			boolean foundName=false;
+			do {
+				SystemCommands.pause();
+				if(this.buttonClick(By.linkText(lookUp))) {
+					foundName=true;
+				}else {
+					if(!this.buttonClick(By.partialLinkText("Next"))) {
+						if(!"A".equals(letter)) {
+							this.buttonClick(By.linkText("A"));
+						}else {
+							this.buttonClick(By.linkText("B"));
+						}
+						this.buttonClick(By.linkText(letter));
+					}
+				}
+			}while(!foundName);
+		}
+		this.buttonClick(this.portal);
+		this.buttonClick(this.userLog);
+	}
+	
+	public void closeBar() {
+		try {
+			this.buttonClick(newBut);
+			this.buttonClick(this.sideBar);
+			SystemCommands.pause();
+		}catch(ElementNotVisibleException e) {
+			//If it isn't visible, we are good to go!
+		}
 	}
 }

@@ -125,7 +125,7 @@ public class ContractorTest {
 		page.buttonClick(page.home,"Applicant");
 		page.verifyTitle();
 		Contact testAll=new Contact(new Random().nextInt(1000000));
-		page.contractorPageExe(testAll);
+		page.createReviewer(testAll);
 		Assert.assertEquals(page.getTitle(), "Contact: "+testAll.getFirstName()+" "+testAll.getLastName()+" ~ Applicant");
 		
 	}

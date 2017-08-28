@@ -7,16 +7,14 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
-import AutomationFramework.SystemCommands;
-
 public abstract class Page {
 	static WebDriver driver;
 	String expectedTitle;
-	public By newBut=By.id("createNewButton");
-	public By sideBar=By.id("pinIndicator");
-	public By logout=By.xpath("//*[@title=\"Logout\"]");
-	public By user=By.id("userNavLabel");
+
+
 	
+	public abstract void login(Object loginInfo);
+
 	public String getTitle(){
 	        return Page.driver.getTitle();
 	}
@@ -92,26 +90,9 @@ public abstract class Page {
 		}
 	}
 	
-	public void Logout() {
-		//Page.driver.navigate().to(sandBoxURL);
-		this.buttonClick(this.user);
-		this.buttonClick(this.logout);
-	}
-	
 	public void accept() {
 		driver.switchTo().alert().accept();
 	}
 	
-	//Ensures that the "convenient" side-bar
-	//is minimized.
-	public void closeBar() {
-		try {
-			this.buttonClick(newBut);
-			this.buttonClick(this.sideBar);
-			SystemCommands.pause();
-		}catch(ElementNotVisibleException e) {
-			//If it isn't visible, we are good to go!
-		}
-	}
 	
 }
