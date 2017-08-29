@@ -224,6 +224,7 @@ public class reviewerPage extends Page{
 			String[] COI=getCOIVal(COInums[i]);
 			this.buttonClick(By.name(COI[0]));
 			this.enterField(By.name(COI[1]), "Reason");
+			//2: Partial Ban, 3: Total Ban, 4: No Conflict
 			this.selectList(By.name(COI[2]), 2);
 		}	
 		SystemCommands.pause(pauseTime);
