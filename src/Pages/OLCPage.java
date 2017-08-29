@@ -26,6 +26,9 @@ public class OLCPage extends Page{
 
 	public void approveApp(Contact reviewer,String contactListURL, int pauseTime) {
 		driver.navigate().to(contactListURL);
+		if(!Page.driver.getTitle().equals("Contacts: F2 Solutions LLC ~ Salesforce - Enterprise Edition")) {
+			System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+		}
 			SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
@@ -80,6 +83,9 @@ public class OLCPage extends Page{
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
+			if(!Page.driver.getTitle().equals("User: Ashanti Kimbrough ~ Salesforce - Enterprise Edition")) {
+				System.out.println("UNEXPECTED WEBPAGE: link for \"OLC Login Page\" might be broken");
+			}
 			this.buttonClick(By.xpath("//*[@title=\"Login\"]"));
 		}	
 	}

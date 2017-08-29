@@ -83,6 +83,9 @@ public class skillAssessorPage extends Page {
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
+			if(!Page.driver.getTitle().equals("User: Ayana Sufian ~ Salesforce - Enterprise Edition")) {
+				System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+			}
 			this.buttonClick(By.xpath("//*[@title=\"Login\"]"));
 		}
 		

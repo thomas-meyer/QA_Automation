@@ -49,7 +49,6 @@ public class reviewerPage extends Page{
 	public reviewerPage(WebDriver driverBeingUsed, Contact reviewer){
 		Page.driver=driverBeingUsed;
 		//refresh
-		this.expectedTitle="Applicant";
 		this.login(reviewer);
 	}
 	
@@ -76,7 +75,7 @@ public class reviewerPage extends Page{
 		while(!processed & infCount!=300) {
 				SystemCommands.pause(1);
 			this.buttonClick(this.save);
-			if(!this.checkTitle("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
+			if(!this.getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
 				processed=true;
 			}
 			infCount++;

@@ -49,7 +49,6 @@ public class contractorPage extends Page{
 	public contractorPage(WebDriver driverBeingUsed, String contractorURL){
 		Page.driver=driverBeingUsed;
 		//ensure fresh login
-		this.expectedTitle="Applicant";
 		this.login(contractorURL);
 	}
 	
@@ -80,10 +79,13 @@ public class contractorPage extends Page{
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
+			if(!Page.driver.getTitle().equals("Contact: Andrew Manning ~ Salesforce - Enterprise Edition")) {
+				System.out.println("UNEXPECTED WEBPAGE: link for \"Contractor Login Page\" might be broken");
+			}
 			this.buttonClick(this.portal);
 			this.buttonClick(this.userLog);
 		}else {
-			System.out.println("\"ERROR: contractor URL is not entered as a String-This error should never be reached");
+			System.out.println("ERROR: contractor URL is not entered as a String-This error should never be reached");
 		}
 	}
 

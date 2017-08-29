@@ -45,7 +45,7 @@ public class SeleniumRun{
 		
 		
 		
-		Contact newReviewer= new Contact("Test","Messy6");
+		Contact newReviewer= new Contact(12346);
 		contactToPool(driver,newReviewer);
 		
 		
@@ -59,8 +59,8 @@ public class SeleniumRun{
 	//and automate the process from creation to successfully moving them
 	//to the qualified candidate pool
 	public static void contactToPool(WebDriver driver, Contact reviewer) throws InterruptedException {
-		//important links.  If any of these are broken, the process will crash
-		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com";
+		//Important links.  If any of these are broken, the process will r
+		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
 		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
 		String skillAssessorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1";//Ayana Sufian
 		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
@@ -71,10 +71,6 @@ public class SeleniumRun{
 		int pauseTime=1;
 		//Logs into the sandbox
 		lPage=new loginPage(driver, sandBoxURL);
-		if(!driver.getTitle().equals("Salesforce - Enterprise Edition")) {
-			System.out.println("Unable to Log into Salesforce."+'\n'
-					+"Check \"loginInto.txt\" and verify that the login creditials are correct");
-		}
 		System.out.println("BEGIN: Creating new Reviewer");
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createReviewer(reviewer,pauseTime);

@@ -28,9 +28,8 @@ public class loginPage extends Page{
 			SystemCommands.pause(1);
 		this.login(this.sandboxURL);
 			SystemCommands.pause(2);
-		this.expectedTitle="Organizations: Home ~ Salesforce - Enterprise Edition";
 		//Potential Infinite Loop
-		if(!Page.driver.getTitle().equals(this.expectedTitle)) {
+		if(!Page.driver.getTitle().equals("Salesforce - Enterprise Edition")) {
 			this.login(this.sandboxURL);
 		}
 		System.setOut(original);
@@ -45,6 +44,9 @@ public class loginPage extends Page{
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
+			if(!Page.driver.getTitle().equals("Login "+'|'+" Salesforce")) {
+				System.out.println("UNEXPECTED WEBPAGE: link for \"Sandbox Login Page\" might be broken");
+			}
 			//Page.driver.navigate().to("https://cdfi1--cdfiqa01.cs33.my.salesforce.com");
 				SystemCommands.pause(1);
 			try {

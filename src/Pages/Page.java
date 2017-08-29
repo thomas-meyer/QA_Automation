@@ -1,6 +1,4 @@
 package Pages;
-
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.NoSuchElementException;
@@ -8,26 +6,28 @@ import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.Select;
 
+//Page is an abstract class that serves as the foundations for all of our Selenium integrated classes.
+//The functions here are applied to all of our class and have built in debugging.
+//NOTE: Page itself is not a stand alone class and can't be called itself
 public abstract class Page {
+	//Once defined, enables web-browser interactions
 	static WebDriver driver;
-	String expectedTitle;
 
-
-	
+	//A login method is required for all pages.  However since the login method isn't universal
+	//it is not explicitly define in this class, but rather left up to the other classes to define.
 	public abstract void login(Object loginInfo);
 
+	//Returns the header of a webpage
+	//This is useful for verifying that
+	//you have navigated to the proper webpage
 	public String getTitle(){
 	        return Page.driver.getTitle();
 	}
 	
-	public void verifyTitle() {
-		Assert.assertEquals(this.expectedTitle,this.getTitle());
-	}
-	
-	public boolean checkTitle(String expectedTitle) {
-		return this.getTitle().equals(expectedTitle);
-	}
-	
+	//Verifies that the thing you are trying to access
+	//actually exists on the page.  If it doesn't exist,
+	//the program will write to the System.out source 
+	//and return false.
 	public boolean elementExists(By element) {
 		try {
 			Page.driver.findElement(element);
@@ -41,25 +41,27 @@ public abstract class Page {
 		}
 	}
 	
-	public void buttonClick(By button,String titleChange) {
-		if(this.elementExists(button)) {
-			driver.findElement(button).click();
-			this.expectedTitle=titleChange;
-		}else {
-			System.out.println(" \"clickable button\"");
-		}
-	}
-	
+	//Function to click button
+	//Returns true if the button exists
+	//and was able to be clicked
 	public boolean buttonClick(By button) {
 		if(this.elementExists(button)) {
+			try {
 			driver.findElement(button).click();
 			return true;
+			}catch(UnsupportedCommandException e) {
+				System.out.println("FAILED TO CLICK: ("+button.toString()+")");
+				return false;
+			}
 		}else {
 			System.out.println(" \"clickable button\"");
 			return false;
 		}
 	}
 	
+	//Function to enter information into a field
+	//Returns true if the field exists and information
+	//was able to be entered into it
 	public boolean enterField(By field, String input) {
 		if(this.elementExists(field)) {
 			try {
@@ -75,6 +77,9 @@ public abstract class Page {
 		}
 	}
 	
+	//Function to select option from a picklist
+	//Returns true if the picklist exists and
+	//the option is able to be selected
 	public boolean selectList(By selectMenu,String selectOption) {
 		if(this.elementExists(selectMenu)) {
 			try {
@@ -82,7 +87,10 @@ public abstract class Page {
 				menu.selectByVisibleText("Reviewer");
 				return true;
 			}catch(NoSuchElementException e) {
-				System.out.println("FAILED TO SELECT the value \""+selectOption+"\" from the picklist ("+selectMenu.toString()+")");
+				System.out.println("FAILED TO SELECT VALUE: \""+selectOption+"\" from the picklist ("+selectMenu.toString()+")");
+				return false;
+			}catch(UnsupportedCommandException e) {
+				System.out.println("FAILED TO SELECT: ("+selectMenu.toString()+")");
 				return false;
 			}
 		}else {
@@ -91,6 +99,7 @@ public abstract class Page {
 		}
 	}
 	
+	//**This lazier and should be avoided**
 	public boolean selectList(By selectMenu,int selectOption) {
 		if(this.elementExists(selectMenu)) {
 			try{
@@ -98,7 +107,7 @@ public abstract class Page {
 				menu.selectByIndex(selectOption);
 				return true;
 			}catch(NoSuchElementException e) {
-				System.out.println("FAILED TO SELECT the "+Integer.toString(selectOption)+"value from the picklist ("+selectMenu.toString()+")");
+				System.out.println("FAILED TO SELECT the "+Integer.toString(selectOption)+" value from the picklist ("+selectMenu.toString()+")");
 				return false;
 			}
 		}else {
@@ -107,8 +116,14 @@ public abstract class Page {
 		}
 	}
 	
+	//Accepts any pop-up
 	public void accept() {
 		driver.switchTo().alert().accept();
+	}
+	
+	//dismisses any pop-up
+	public void reject() {
+		driver.switchTo().alert().dismiss();
 	}
 	
 	
