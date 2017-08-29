@@ -144,8 +144,7 @@ public class reviewerPage extends Page{
 		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.addRevCOI);
 		if(reviewer.getCOIcond()) {
-			int[] COIs= {1};
-			addCOI(reviewer, pauseTime,COIs);
+			addCOI(reviewer, pauseTime,reviewer.getCOIs());
 		}else {
 			noCOI(reviewer, pauseTime);
 		}
@@ -222,7 +221,7 @@ public class reviewerPage extends Page{
 		this.selectList(this.readCOI, 1);
 		//Fills out COI here
 		for(int i=0;i<COInums.length;i++) {
-			String[] COI=getCOIVal(COInums[0]);
+			String[] COI=getCOIVal(COInums[i]);
 			this.buttonClick(By.name(COI[0]));
 			this.enterField(By.name(COI[1]), "Reason");
 			this.selectList(By.name(COI[2]), 2);

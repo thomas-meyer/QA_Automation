@@ -49,9 +49,9 @@ public class SeleniumRun{
 		Random rand=new Random();
 		Contact reviewer= new Contact(rand.nextInt(100000));
 		int[] add= {1};
-		reviewer.setCOI(true);
-		reviewer.setCOIs(add);
-		contactToPool(driver,reviewer);
+		//reviewer.setCOI(true);
+		//reviewer.setCOIs(add);
+		//contactToPool(driver,reviewer);
 		Contact newLead= new Contact(rand.nextInt(100000));
 		add= new int[2];
 		add[0]=1;add[1]=3;
