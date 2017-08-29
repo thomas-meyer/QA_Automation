@@ -12,6 +12,11 @@ public class Contact {
 	//True, they have experience
 	//False.=, they don't have experience
 	private boolean experience;
+	//No COI: <5
+	//One COI =6
+	//One COI no
+	private boolean COIcond;
+	private int[] COIs;
 	
 	//If the num used is a duplicate, the program will run into problems
 	//Best practice is to generate and use a large random num (however
@@ -27,6 +32,13 @@ public class Contact {
 			this.experience=true;
 		}else {
 			this.experience=false;
+		}
+		if(rand.nextInt(2)==1) {
+			this.COIs=new int[1];
+			this.COIs[0]=0;
+			this.COIcond=true;
+		}else {
+			this.COIcond=false;
 		}
 	}
 	
@@ -66,9 +78,25 @@ public class Contact {
 		return this.experience;
 	}
 	
+	public boolean getCOIcond() {
+		return this.COIcond;
+	}
+	
+	public int[] getCOIs() {
+		return this.COIs;
+	}
+	
 	//Manually set if the Contact has experience
 	public void setExp(boolean newExp) {
 		this.experience=newExp;
+	}
+	
+	public void setCOI(boolean newCOI) {
+		this.COIcond=newCOI;
+	}
+	
+	public void setCOIs(int[] newCOI) {
+		this.COIs=newCOI;
 	}
 	
 	//Manually set the Contact's email address

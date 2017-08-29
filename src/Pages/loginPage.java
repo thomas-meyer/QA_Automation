@@ -31,8 +31,16 @@ public class loginPage extends Page{
 		//Potential Infinite Loop
 		System.setOut(original);
 		if(!Page.driver.getTitle().equals("Salesforce - Enterprise Edition")) {
-			System.out.println("RELOGIN FAIED: trying again");
+			System.out.println("RELOGIN FAILED: trying again");
 			this.login(this.sandboxURL);
+			if(!Page.driver.getTitle().equals("Salesforce - Enterprise Edition")) {
+				System.out.println("RELOGIN FAILED: trying again");
+				this.login(this.sandboxURL);
+				if(!Page.driver.getTitle().equals("Salesforce - Enterprise Edition")) {
+					System.out.println("RELOGIN FAILED: trying again");
+					this.login(this.sandboxURL);
+				}
+			}
 		}
 		
 	}

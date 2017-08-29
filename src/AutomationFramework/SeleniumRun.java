@@ -48,8 +48,15 @@ public class SeleniumRun{
 		
 		Random rand=new Random();
 		Contact reviewer= new Contact(rand.nextInt(100000));
+		int[] add= {1};
+		reviewer.setCOI(true);
+		reviewer.setCOIs(add);
 		contactToPool(driver,reviewer);
 		Contact newLead= new Contact(rand.nextInt(100000));
+		add= new int[2];
+		add[0]=1;add[1]=3;
+		newLead.setCOI(true);
+		newLead.setCOIs(add);
 		createTeamLead(driver,newLead);
 		
 		
@@ -97,9 +104,9 @@ public class SeleniumRun{
 	}
 	
 	public static void createTeamLead(WebDriver driver, Contact teamLead, int pauseTime) {
-		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
-		contractorPage cPage;
 		System.out.println("BEGIN: Creating new TeamLead");
+		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";
+		contractorPage cPage;
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createTeamLeader(teamLead,pauseTime);
 		System.out.println("END: Creating new TeamLead");
@@ -114,9 +121,9 @@ public class SeleniumRun{
 	}
 	
 	public static void createReviewer(WebDriver driver, Contact reviewer, int pauseTime) {
-		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
-		contractorPage cPage;
 		System.out.println("BEGIN: Creating new Reviewer");
+		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";
+		contractorPage cPage;
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createReviewer(reviewer,pauseTime);
 		System.out.println("END: Creating new Reviewer");
@@ -135,7 +142,7 @@ public class SeleniumRun{
 		System.out.println("BEGIN: Filling out Reviewer Profile");
 		reviewerPage rPage;
 		rPage=new reviewerPage(driver, reviewer);
-		rPage.createProfile(reviewer,pauseTime);
+		rPage.createRevProfile(reviewer,pauseTime);
 		System.out.println("END: Filling out Reviewer Profile");
 	}
 	
@@ -148,10 +155,10 @@ public class SeleniumRun{
 	}
 	
 	public static void olcApprove(WebDriver driver, Contact contact, int pauseTime) {
+		System.out.println("BEGIN: Approving Reviewer COI");
 		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
 		String F2orgConURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/003?rlid=RelatedContactList&id=00135000003Dfsv";
 		OLCPage olcPage;
-		System.out.println("BEGIN: Approving Reviewer COI");
 		olcPage=new OLCPage(driver, olcStaffURL);
 		olcPage.approveApp(contact,F2orgConURL,pauseTime);
 		System.out.println("END: Approving Reviewer COI");

@@ -55,34 +55,34 @@ public class contractorPage extends Page{
 	public void createReviewer(Contact newReviewer, int pauseTime){
 		createContact(newReviewer, pauseTime);
 		this.selectList(this.profile, "Reviewer");
-			SystemCommands.pause(pauseTime);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
-			SystemCommands.pause(pauseTime);
+		SystemCommands.pause(pauseTime);
 	}
 	
 	public void createTeamLeader(Contact teamLead, int pauseTime){
 		createContact(teamLead, pauseTime);
 		this.selectList(this.profile, 2);
-			SystemCommands.pause(pauseTime);
+		SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
-			SystemCommands.pause(pauseTime);
+		SystemCommands.pause(pauseTime);
 	}
 
 	private void createContact(Contact newContact, int pauseTime) {
 		this.buttonClick(this.contacts);
 		SystemCommands.pause(pauseTime);
-	this.buttonClick(this.newBut);
+		this.buttonClick(this.newBut);
 		SystemCommands.pause(pauseTime);
-	this.enterField(this.firstNameField,newContact.getFirstName());
-	this.enterField(this.lastNameField,newContact.getLastName());
-	this.enterField(this.emailField,newContact.getEmail());
-	this.enterField(this.orgNameField,"F2 Solutions LLC");
+		this.enterField(this.firstNameField,newContact.getFirstName());
+		this.enterField(this.lastNameField,newContact.getLastName());
+		this.enterField(this.emailField,newContact.getEmail());
+		this.enterField(this.orgNameField,"F2 Solutions LLC");
 		SystemCommands.pause(pauseTime);
-	this.buttonClick(this.save);
+		this.buttonClick(this.save);
 		SystemCommands.pause(pauseTime);
-	this.buttonClick(this.portal);
+		this.buttonClick(this.portal);
 		SystemCommands.pause(pauseTime);
-	this.buttonClick(this.enableParnterUse);
+		this.buttonClick(this.enableParnterUse);
 		SystemCommands.pause(pauseTime);
 	}
 	
