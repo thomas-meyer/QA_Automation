@@ -88,7 +88,7 @@ public class reviewerPage extends Page{
 			this.accept();
 				SystemCommands.pause(pauseTime);
 		}else {
-			System.out.println("System took over five minutes to register reviewers name.  This is too long");
+			System.out.println("LOOPING ERROR: System couldn't find Reviewer's name.");
 		}
 	}
 	public void addCOI(Contact reviewer,int pauseTime) {
@@ -149,7 +149,7 @@ public class reviewerPage extends Page{
 				this.buttonClick(this.portal);
 				this.buttonClick(this.userLog);
 			}else {
-				System.out.println("System believed it was in an infinite loop an exited from finding \""+lookUp+"\"");
+				System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
 			}
 		}
 	}

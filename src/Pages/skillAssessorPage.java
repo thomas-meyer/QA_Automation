@@ -75,7 +75,7 @@ public class skillAssessorPage extends Page {
 					SystemCommands.pause(2);
 			}
 		}else {
-			System.out.println("System believed it was in an infinite loop an exited from Skill Assessment Approval Process");
+			System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
 		}
 	}
 

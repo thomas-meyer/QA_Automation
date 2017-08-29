@@ -70,7 +70,7 @@ public class OLCPage extends Page{
 			this.buttonClick(this.save);
 				SystemCommands.pause(pauseTime);
 		}else {
-			System.out.println("System believed it was in an infinite loop an exited from OLC Approval Process");
+			System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
 		}
 	}
 

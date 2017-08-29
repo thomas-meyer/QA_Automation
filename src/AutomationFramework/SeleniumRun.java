@@ -6,12 +6,10 @@ import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-
 import Pages.OLCPage;
 import Pages.contractorPage;
 import Pages.loginPage;
@@ -26,7 +24,7 @@ public class SeleniumRun{
 		DateFormat dateFormat = new SimpleDateFormat("MM.dd_HH.mm");
 		Date date = new Date();
 		try {
-	        System.setOut(new PrintStream(new File("QA_results_"+dateFormat.format(date)+".txt")));
+	        System.setOut(new PrintStream(new File("QA_Results_"+dateFormat.format(date)+".txt")));
 			dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yy");
 			System.out.println("QA Automation run at: "+dateFormat.format(date));
 	    } catch (Exception e) {

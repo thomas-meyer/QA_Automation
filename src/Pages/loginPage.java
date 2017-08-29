@@ -2,17 +2,13 @@ package Pages;
 
 import java.io.IOException;
 import java.io.PrintStream;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-
 import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
-
 public class loginPage extends Page{
-
 	public String sandboxURL;
-	//"https://cdfi1--cdfiqa01.cs33.my.salesforce.com"
+	
 	public By usernameField=By.id("username");
 	public By passwordField=By.id("password");
 	public By login=By.id("Login");
