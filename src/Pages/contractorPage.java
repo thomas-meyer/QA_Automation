@@ -52,35 +52,51 @@ public class contractorPage extends Page{
 		this.login(contractorURL);
 	}
 	
-	public void createReviewer(Contact newContact, int pauseTime){
-		this.buttonClick(this.contacts);
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.newBut);
-			SystemCommands.pause(pauseTime);
-		this.enterField(this.firstNameField,newContact.getFirstName());
-		this.enterField(this.lastNameField,newContact.getLastName());
-		this.enterField(this.emailField,newContact.getEmail());
-		this.enterField(this.orgNameField,"F2 Solutions LLC");
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.save);
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.portal);
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.enableParnterUse);
-			SystemCommands.pause(pauseTime);
+	public void createReviewer(Contact newReviewer, int pauseTime){
+		createContact(newReviewer, pauseTime);
 		this.selectList(this.profile, "Reviewer");
 			SystemCommands.pause(pauseTime);
 		this.buttonClick(this.save);
 			SystemCommands.pause(pauseTime);
 	}
+	
+	public void createTeamLeader(Contact teamLead, int pauseTime){
+		createContact(teamLead, pauseTime);
+		this.selectList(this.profile, 2);
+			SystemCommands.pause(pauseTime);
+		this.buttonClick(this.save);
+			SystemCommands.pause(pauseTime);
+	}
 
+	private void createContact(Contact newContact, int pauseTime) {
+		this.buttonClick(this.contacts);
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.newBut);
+		SystemCommands.pause(pauseTime);
+	this.enterField(this.firstNameField,newContact.getFirstName());
+	this.enterField(this.lastNameField,newContact.getLastName());
+	this.enterField(this.emailField,newContact.getEmail());
+	this.enterField(this.orgNameField,"F2 Solutions LLC");
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.save);
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.portal);
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.enableParnterUse);
+		SystemCommands.pause(pauseTime);
+	}
+	
 	@Override
 	//loginInfo is String URL of contractor
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
 			if(!Page.driver.getTitle().equals("Contact: Andrew Manning ~ Salesforce - Enterprise Edition")) {
-				System.out.println("UNEXPECTED WEBPAGE: link for \"Contractor Login Page\" might be broken");
+				SystemCommands.pause(2);
+				Page.driver.navigate().to((String) loginInfo);
+				if(!Page.driver.getTitle().equals("Contact: Andrew Manning ~ Salesforce - Enterprise Edition")) {
+					System.out.println("UNEXPECTED WEBPAGE: link for \"Contractor Login Page\" might be broken");
+				}
 			}
 			this.buttonClick(this.portal);
 			this.buttonClick(this.userLog);
@@ -88,5 +104,6 @@ public class contractorPage extends Page{
 			System.out.println("ERROR: contractor URL is not entered as a String-This error should never be reached");
 		}
 	}
+
 
 }

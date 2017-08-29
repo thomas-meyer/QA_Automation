@@ -29,10 +29,12 @@ public class loginPage extends Page{
 		this.login(this.sandboxURL);
 			SystemCommands.pause(2);
 		//Potential Infinite Loop
+		System.setOut(original);
 		if(!Page.driver.getTitle().equals("Salesforce - Enterprise Edition")) {
+			System.out.println("RELOGIN FAIED: trying again");
 			this.login(this.sandboxURL);
 		}
-		System.setOut(original);
+		
 	}
 	
 	public void logout() {

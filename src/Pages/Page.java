@@ -1,6 +1,7 @@
 package Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriver;
@@ -118,13 +119,11 @@ public abstract class Page {
 	
 	//Accepts any pop-up
 	public void accept() {
-		driver.switchTo().alert().accept();
+		try{
+			driver.switchTo().alert().accept();
+		}catch(NoAlertPresentException e) {
+			System.out.println("EXPECTED ALERT: no alert detected");
+		}
 	}
-	
-	//dismisses any pop-up
-	public void reject() {
-		driver.switchTo().alert().dismiss();
-	}
-	
 	
 }

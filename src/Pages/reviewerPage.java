@@ -38,7 +38,8 @@ public class reviewerPage extends Page{
 	public By name=By.id("CF00Nt0000000SWKG");
 	public By terms=By.name("00Nt0000000SgVo");
 	public By app=By.partialLinkText("REV-");//This is sloppy
-	public By addCOI=By.xpath("//*[@title=\"New Applicant List – Identify Conflicts\"]");
+	public By addRevCOI=By.name("new_applicant_list_identify_conflicts");
+	public By addLedCOI=By.name("pending_application");
 	public By correctCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id42");
 	public By readCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id41");
 	public By exitCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id38");
@@ -50,6 +51,47 @@ public class reviewerPage extends Page{
 		Page.driver=driverBeingUsed;
 		//refresh
 		this.login(reviewer);
+	}
+	@Override
+	public void login(Object loginInfo) {
+		if(loginInfo instanceof Contact) {
+			SystemCommands.pause();
+			this.buttonClick(By.xpath("//*[@title=\"Contacts Tab\"]"));
+			SystemCommands.pause();
+			this.buttonClick(By.xpath("//*[@title=\"Go!\"]"));
+				SystemCommands.pause();
+			String lookUp=((Contact) loginInfo).getLastName()+", "+((Contact) loginInfo).getFirstName();
+			String letter=lookUp.charAt(0)+"";
+			this.buttonClick(By.linkText(letter));
+				SystemCommands.pause();
+			boolean foundName=false;int infCount=0;
+			//Potential Infinite Loop
+			PrintStream original = System.out;
+			System.setOut(new NullPrintStream());
+			do {
+					SystemCommands.pause();
+				if(this.buttonClick(By.linkText(lookUp))) {
+					foundName=true;
+				}else {
+					if(!this.buttonClick(By.partialLinkText("Next"))) {
+						if(!"A".equals(letter)) {
+							this.buttonClick(By.linkText("A"));
+						}else {
+							this.buttonClick(By.linkText("B"));
+						}
+						this.buttonClick(By.linkText(letter));
+					}
+				}
+				infCount++;
+			}while(!foundName & infCount<100);
+			System.setOut(original);
+			if(infCount!=100) {
+				this.buttonClick(this.portal);
+				this.buttonClick(this.userLog);
+			}else {
+				System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
+			}
+		}
 	}
 	
 	public void createProfile(Contact reviewer, int pauseTime) {
@@ -90,13 +132,19 @@ public class reviewerPage extends Page{
 			System.out.println("LOOPING ERROR: System couldn't find Reviewer's name.");
 		}
 	}
-	public void addCOI(Contact reviewer,int pauseTime) {
+	
+	public void reviewerAddCOI(Contact reviewer,int pauseTime) {
 		this.buttonClick(this.reviewerProfiles);
 			SystemCommands.pause(pauseTime);
 		this.closeBar();
 		this.buttonClick(this.app);
 			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.addCOI);
+		this.buttonClick(this.addRevCOI);
+		addCOI(reviewer, pauseTime);
+	}
+	
+	public void addCOI(Contact reviewer,int pauseTime) {
+			SystemCommands.pause(pauseTime);
 		this.selectList(this.correctCOI, 2);
 		this.selectList(this.readCOI, 1);
 			SystemCommands.pause(pauseTime);
@@ -113,45 +161,7 @@ public class reviewerPage extends Page{
 		}
 	}
 
-	@Override
-	public void login(Object loginInfo) {
-		if(loginInfo instanceof Contact) {
-			this.buttonClick(By.xpath("//*[@title=\"Contacts Tab\"]"));
-			this.buttonClick(By.xpath("//*[@title=\"Go!\"]"));
-				SystemCommands.pause();
-			String lookUp=((Contact) loginInfo).getLastName()+", "+((Contact) loginInfo).getFirstName();
-			String letter=lookUp.charAt(0)+"";
-			this.buttonClick(By.linkText(letter));
-				SystemCommands.pause();
-			boolean foundName=false;int infCount=0;
-			//Potential Infinite Loop
-			PrintStream original = System.out;
-			System.setOut(new NullPrintStream());
-			do {
-					SystemCommands.pause();
-				if(this.buttonClick(By.linkText(lookUp))) {
-					foundName=true;
-				}else {
-					if(!this.buttonClick(By.partialLinkText("Next"))) {
-						if(!"A".equals(letter)) {
-							this.buttonClick(By.linkText("A"));
-						}else {
-							this.buttonClick(By.linkText("B"));
-						}
-						this.buttonClick(By.linkText(letter));
-					}
-				}
-				infCount++;
-			}while(!foundName & infCount<100);
-			System.setOut(original);
-			if(infCount!=100) {
-				this.buttonClick(this.portal);
-				this.buttonClick(this.userLog);
-			}else {
-				System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
-			}
-		}
-	}
+	
 	
 	public void closeBar() {
 		try {
@@ -161,5 +171,38 @@ public class reviewerPage extends Page{
 		}catch(ElementNotVisibleException e) {
 			//If it isn't visible, we are good to go!
 		}
+	}
+
+	public void createLeadProfile(Contact teamLead, int pauseTime) {
+	this.buttonClick(this.reviewerProfiles);
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.newRevPro);
+		SystemCommands.pause(pauseTime);
+	this.buttonClick(this.continueBut);
+		SystemCommands.pause(pauseTime);
+	this.enterField(this.name,teamLead.getLastName()+" "+teamLead.getFirstName());
+	this.selectList(this.formReviewProg, 2);
+	SystemCommands.pause();
+	this.buttonClick(this.add);
+	this.selectList(this.fiscalYear, 1);
+	this.selectList(this.terms, 1);
+		SystemCommands.pause(pauseTime);
+	Boolean processed=false;int infCount=0;
+	while(!processed & infCount!=300) {
+			SystemCommands.pause(1);
+		this.buttonClick(this.save);
+		if(!this.getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
+			processed=true;
+		}
+		infCount++;
+	}
+	if(infCount!=300) {
+		SystemCommands.pause(pauseTime);
+		this.buttonClick(this.addLedCOI);
+		addCOI(teamLead, pauseTime);
+			SystemCommands.pause(pauseTime);
+	}else {
+		System.out.println("LOOPING ERROR: System couldn't find Reviewer's name.");
+	}
 	}
 }

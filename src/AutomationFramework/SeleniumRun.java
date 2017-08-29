@@ -6,6 +6,8 @@ import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
+
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -44,11 +46,11 @@ public class SeleniumRun{
 		////***THE CODE YOU WISH TO RUN GOES HERE!***
 		
 		
-		
-		Contact newReviewer= new Contact(12346);
-		contactToPool(driver,newReviewer);
-		
-		
+		Random rand=new Random();
+		Contact reviewer= new Contact(rand.nextInt(100000));
+		contactToPool(driver,reviewer);
+		Contact newLead= new Contact(rand.nextInt(100000));
+		createTeamLead(driver,newLead);
 		
 		
 		////***THE CODE YOU WISH TO RUN SHOULD BE FINISHED***
@@ -59,44 +61,102 @@ public class SeleniumRun{
 	//and automate the process from creation to successfully moving them
 	//to the qualified candidate pool
 	public static void contactToPool(WebDriver driver, Contact reviewer) throws InterruptedException {
+		System.out.println("BEGIN: Contact to Qualified Pool Process");
 		//Important links.  If any of these are broken, the process will r
 		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
-		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
-		String skillAssessorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1";//Ayana Sufian
-		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
-		String F2orgConURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/003?rlid=RelatedContactList&id=00135000003Dfsv";
-		//Users that will be used during the approval process
-		loginPage lPage;contractorPage cPage;reviewerPage rPage;skillAssessorPage sPage;OLCPage olcPage;
-		//Pause time, default is 0.  Change to make display easier to follow
+		loginPage lPage;
 		int pauseTime=1;
-		//Logs into the sandbox
 		lPage=new loginPage(driver, sandBoxURL);
+		createReviewer(driver,reviewer,pauseTime);
+		lPage.changeUser();
+		createReviewProfile(driver, reviewer, pauseTime);
+		lPage.changeUser();
+		skillApproval(driver,reviewer,pauseTime);
+		lPage.changeUser();
+		fillOutCOI(driver,reviewer,pauseTime);
+		lPage.changeUser();
+		olcApprove(driver,reviewer,pauseTime);
+		lPage.logout();	
+		System.out.println("END: Contact to Qualified Pool Process");
+	}
+	
+	public static void createTeamLead(WebDriver driver, Contact reviewer) throws InterruptedException{
+		System.out.println("BEGIN: Clearing Team Lead");
+		//Important links.  If any of these are broken, the process will r
+		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
+		loginPage lPage;
+		int pauseTime=1;
+		lPage=new loginPage(driver, sandBoxURL);
+		createTeamLead(driver,reviewer,pauseTime);
+		lPage.changeUser();
+		createTeamLeadProfile(driver, reviewer, pauseTime);
+		lPage.changeUser();
+		olcApprove(driver,reviewer,pauseTime);
+		lPage.logout();	
+		System.out.println("END: Clearing Team Lead");
+	}
+	
+	public static void createTeamLead(WebDriver driver, Contact teamLead, int pauseTime) {
+		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
+		contractorPage cPage;
+		System.out.println("BEGIN: Creating new TeamLead");
+		cPage = new contractorPage(driver,contractorURL);
+		cPage.createTeamLeader(teamLead,pauseTime);
+		System.out.println("END: Creating new TeamLead");
+	}
+	
+	public static void createTeamLeadProfile(WebDriver driver, Contact teamLead, int pauseTime) {
+		System.out.println("BEGIN: Filling out Reviewer Profile");
+		reviewerPage rPage;
+		rPage=new reviewerPage(driver, teamLead);
+		rPage.createLeadProfile(teamLead,pauseTime);
+		System.out.println("END: Filling out Reviewer Profile");
+	}
+	
+	public static void createReviewer(WebDriver driver, Contact reviewer, int pauseTime) {
+		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";//Andrew Manning
+		contractorPage cPage;
 		System.out.println("BEGIN: Creating new Reviewer");
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createReviewer(reviewer,pauseTime);
 		System.out.println("END: Creating new Reviewer");
-		lPage.changeUser();
-		System.out.println("BEGIN: Filling out Reviewer Profile");
-		rPage=new reviewerPage(driver, reviewer);
-		rPage.createProfile(reviewer,pauseTime);
-		System.out.println("END: Filling out Reviewer Profile");
-		lPage.changeUser();
+	}
+	
+	public static void skillApproval(WebDriver driver, Contact reviewer, int pauseTime) {
 		System.out.println("BEGIN: Approving Reviewer's Skills");
+		String skillAssessorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1";//Ayana Sufian
+		skillAssessorPage sPage;
 		sPage=new skillAssessorPage(driver, skillAssessorURL);
 		sPage.approveApp(reviewer,pauseTime);
 		System.out.println("END: Approving Reviewer's Skills");
-		lPage.changeUser();
-		System.out.println("BEGIN: Filling out Reviewer COI");
+	}
+	
+	public static void createReviewProfile(WebDriver driver, Contact reviewer, int pauseTime) {
+		System.out.println("BEGIN: Filling out Reviewer Profile");
+		reviewerPage rPage;
 		rPage=new reviewerPage(driver, reviewer);
-		rPage.addCOI(reviewer,pauseTime);
-		System.out.println("END: Filling out Reviewer COI");
-		lPage.changeUser();
+		rPage.createProfile(reviewer,pauseTime);
+		System.out.println("END: Filling out Reviewer Profile");
+	}
+	
+	public static void fillOutCOI(WebDriver driver, Contact contact, int pauseTime) {
+		System.out.println("BEGIN: Filling out COI");
+		reviewerPage rPage;
+		rPage=new reviewerPage(driver, contact);
+		rPage.reviewerAddCOI(contact,pauseTime);
+		System.out.println("END: Filling out COI");
+	}
+	
+	public static void olcApprove(WebDriver driver, Contact contact, int pauseTime) {
+		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
+		String F2orgConURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/003?rlid=RelatedContactList&id=00135000003Dfsv";
+		OLCPage olcPage;
 		System.out.println("BEGIN: Approving Reviewer COI");
 		olcPage=new OLCPage(driver, olcStaffURL);
-		olcPage.approveApp(reviewer,F2orgConURL,pauseTime);
+		olcPage.approveApp(contact,F2orgConURL,pauseTime);
 		System.out.println("END: Approving Reviewer COI");
-		lPage.logout();		
 	}
+	
 	
 	//Sets up a chrome browser
 	public static WebDriver chromeSetup() {

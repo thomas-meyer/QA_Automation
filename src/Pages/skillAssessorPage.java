@@ -84,7 +84,11 @@ public class skillAssessorPage extends Page {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
 			if(!Page.driver.getTitle().equals("User: Ayana Sufian ~ Salesforce - Enterprise Edition")) {
-				System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+				SystemCommands.pause(2);
+				Page.driver.navigate().to((String) loginInfo);
+				if(!Page.driver.getTitle().equals("User: Ayana Sufian ~ Salesforce - Enterprise Edition")) {
+					System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+				}
 			}
 			this.buttonClick(By.xpath("//*[@title=\"Login\"]"));
 		}

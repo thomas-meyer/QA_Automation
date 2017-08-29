@@ -17,7 +17,7 @@ public class OLCPage extends Page{
 	public By clearedNoRestric=By.id("00Nt0000000SWhY");
 	public By resume=By.id("00Nt0000000SgVk");
 	public By save=By.xpath("//*[@title=\"Save\"]");
-	
+	public By reviewed=By.id("00Nt0000000SWhL");
 	public OLCPage(WebDriver driverBeingUsed, String URL) {
 		Page.driver=driverBeingUsed;
 		this.login(URL);
@@ -27,7 +27,11 @@ public class OLCPage extends Page{
 	public void approveApp(Contact reviewer,String contactListURL, int pauseTime) {
 		driver.navigate().to(contactListURL);
 		if(!Page.driver.getTitle().equals("Contacts: F2 Solutions LLC ~ Salesforce - Enterprise Edition")) {
-			System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+			SystemCommands.pause(2);
+			driver.navigate().to(contactListURL);
+			if(!Page.driver.getTitle().equals("Contacts: F2 Solutions LLC ~ Salesforce - Enterprise Edition")) {
+				System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
+			}
 		}
 			SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
@@ -70,6 +74,11 @@ public class OLCPage extends Page{
 				SystemCommands.pause(pauseTime);
 			this.buttonClick(this.resume);
 				SystemCommands.pause(pauseTime);
+			if (elementExists(this.reviewed)) {
+				if(!driver.findElement(this.reviewed).isSelected()){
+					this.buttonClick(this.reviewed);
+				}
+			}
 			this.buttonClick(this.save);
 				SystemCommands.pause(pauseTime);
 		}else {
