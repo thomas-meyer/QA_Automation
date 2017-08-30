@@ -12,11 +12,12 @@ public class Contact {
 	//True, they have experience
 	//False.=, they don't have experience
 	private boolean experience;
-	//No COI: <5
-	//One COI =6
-	//One COI no
+	//true has COIs, false has no COIs
+	//by default a contact will not have COIs
 	private boolean COIcond;
-	private int[] COIs;
+	//should always be size int[2][]
+	//for second row,0: no ban, 1: partial ban, 2: total ban
+	private int[][] COIs=null;
 	
 	//If the num used is a duplicate, the program will run into problems
 	//Best practice is to generate and use a large random num (however
@@ -33,13 +34,7 @@ public class Contact {
 		}else {
 			this.experience=false;
 		}
-		if(rand.nextInt(2)==1) {
-			this.COIs=new int[1];
-			this.COIs[0]=0;
-			this.COIcond=true;
-		}else {
-			this.COIcond=false;
-		}
+		this.COIcond=false;
 	}
 	
 	//If we want to manually name the bot
@@ -55,6 +50,7 @@ public class Contact {
 		}else {
 			this.experience=false;
 		}
+		this.COIcond=false;
 	}
 	
 	//returns the Contacts first name
@@ -82,7 +78,7 @@ public class Contact {
 		return this.COIcond;
 	}
 	
-	public int[] getCOIs() {
+	public int[][] getCOIs() {
 		return this.COIs;
 	}
 	
@@ -95,8 +91,13 @@ public class Contact {
 		this.COIcond=newCOI;
 	}
 	
-	public void setCOIs(int[] newCOI) {
+	public void setCOIs(int[][] newCOI) {
 		this.COIs=newCOI;
+		if(newCOI!=null) {
+			this.COIcond=true;
+		}else {
+			this.COIcond=false;
+		}
 	}
 	
 	//Manually set the Contact's email address

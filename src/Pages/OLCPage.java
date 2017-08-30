@@ -14,7 +14,7 @@ public class OLCPage extends Page{
 	public By approveReject=By.linkText("Approve / Reject");
 	public By approveApp=By.xpath("//*[@title=\"Approve\"]");
 	public By edit=By.xpath("//*[@title=\"Edit\"]");
-	public By clearedNoRestric=By.id("00Nt0000000SWhY");
+	public By clearedStat=By.id("00Nt0000000SWhY");
 	public By resume=By.id("00Nt0000000SgVk");
 	public By save=By.xpath("//*[@title=\"Save\"]");
 	public By reviewed=By.id("00Nt0000000SWhL");
@@ -24,7 +24,7 @@ public class OLCPage extends Page{
 	
 	public OLCPage(WebDriver driverBeingUsed, String URL) {
 		Page.driver=driverBeingUsed;
-		this.login(URL);
+		login(URL);
 	}
 
 
@@ -33,7 +33,7 @@ public class OLCPage extends Page{
 		driver.navigate().to(contactListURL);
 		SystemCommands.pause(pauseTime);
 		if(!Page.driver.getTitle().equals("Contacts: F2 Solutions LLC ~ Salesforce - Enterprise Edition")) {
-			SystemCommands.pause(2);
+			SystemCommands.pause(pauseTime+2);
 			//If the link fails the first time, try again
 			driver.navigate().to(contactListURL);
 			if(!Page.driver.getTitle().equals("Contacts: F2 Solutions LLC ~ Salesforce - Enterprise Edition")) {
@@ -44,23 +44,23 @@ public class OLCPage extends Page{
 		SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
-		this.buttonClick(By.linkText(letter));
-		SystemCommands.pause();
+		click(By.linkText(letter));
+		SystemCommands.pause(pauseTime);
 		boolean foundName=false;int infCount=0;
 		PrintStream original = System.out;
 		System.setOut(new NullPrintStream());
 		do {
-				SystemCommands.pause();
-			if(this.buttonClick(By.linkText(lookUp))) {
+			SystemCommands.pause();
+			if(click(By.linkText(lookUp))) {
 				foundName=true;
 			}else {
-				if(!this.buttonClick(By.partialLinkText("more"))) {
+				if(!click(By.partialLinkText("more"))) {
 					if(!"A".equals(letter)) {
-						this.buttonClick(By.linkText("A"));
+						click(By.linkText("A"));
 					}else {
-						this.buttonClick(By.linkText("B"));
+						click(By.linkText("B"));
 					}
-					this.buttonClick(By.linkText(letter));
+					click(By.linkText(letter));
 				}
 			}
 			infCount++;
@@ -70,51 +70,78 @@ public class OLCPage extends Page{
 			System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
 		}
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.app);
+		click(app);
 		SystemCommands.pause(pauseTime);
-		if(this.buttonClick(this.approveReject)) {
+		if(click(approveReject)) {
 			SystemCommands.pause(pauseTime);
-			this.buttonClick(this.approveApp);
+			click(approveApp);
 				SystemCommands.pause(pauseTime);
 		}
-		this.buttonClick(this.addCon);
+		click(addCon);
+		SystemCommands.pause(pauseTime);
 		if(reviewer.getCOIcond()) {
-			int[] COIs=reviewer.getCOIs();
-			for(int i=0;i<COIs.length;i++) {
-				verifyCOI(COIs[i]);
+			int[][] COIs=reviewer.getCOIs();
+			for(int i=0;i<COIs[0].length;i++) {
+				SystemCommands.pause(pauseTime);
+				verifyCOI(COIs[0][i],COIs[1][i],pauseTime);
 			}
 		}
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.saveCOI);
+		click(saveCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.exitCOI);
+		click(exitCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.edit);
+		click(edit);
 		SystemCommands.pause(pauseTime);
 		if(reviewer.getCOIcond()) {
-			this.selectList(this.clearedNoRestric, 2);
+			int[] COIstatus=reviewer.getCOIs()[1];
+			int determ=0;
+			for(int i=0;i<COIstatus.length;i++) {
+				determ+=COIstatus[i];
+			}
+			SystemCommands.pause(pauseTime);
+			if(determ==0) {
+				select(clearedStat, 1);
+			}else {
+				select(clearedStat, 2);
+			}
+			SystemCommands.pause(pauseTime);
 		}
 		else {
-			this.selectList(this.clearedNoRestric, 1);
+			select(clearedStat, 1);
+			SystemCommands.pause(pauseTime);
 		}
+		click(resume);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.resume);
-		SystemCommands.pause(pauseTime);
-		if (elementExists(this.reviewed)) {
-			if(!driver.findElement(this.reviewed).isSelected()){
-				this.buttonClick(this.reviewed);
+		if (elementExists(reviewed)) {
+			if(!driver.findElement(reviewed).isSelected()){
+				click(reviewed);
 			}
 		}
-		this.buttonClick(this.save);
+		SystemCommands.pause(pauseTime);
+		click(save);
 		SystemCommands.pause(pauseTime);	
 	}
 
-	private void verifyCOI(int input) {
+	//COIstatus
+	//0: no ban, 1: partial ban, 2: total ban
+	private void verifyCOI(int input, int COIstatus, int pauseTime) {
 		String[] vals=getCOIVal(input);
-		this.selectList(By.name(vals[3]), 2);
-		//2: partial, 3: total, 4:no conflict
-		this.selectList(By.name(vals[4]), 2);
-		this.enterField(By.name(vals[5]), "Looked At");
+		select(By.name(vals[3]), 2);
+		SystemCommands.pause(pauseTime);
+		if(COIstatus==1) {
+			//Partial Ban
+			select(By.name(vals[4]), 2);
+		}else if(COIstatus==2) {
+			//Total Ban
+			select(By.name(vals[4]), 3);
+		}else {
+			//No Conflict
+			select(By.name(vals[4]), 4);
+		}
+		SystemCommands.pause(pauseTime);
+		type(By.name(vals[5]), "Looked At");
+		SystemCommands.pause(pauseTime);
 		
 	}
 
@@ -133,10 +160,12 @@ public class OLCPage extends Page{
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof String) {
 			Page.driver.navigate().to((String) loginInfo);
+			SystemCommands.pause(2);
 			if(!Page.driver.getTitle().equals("User: Ashanti Kimbrough ~ Salesforce - Enterprise Edition")) {
 				System.out.println("UNEXPECTED WEBPAGE: link for \"OLC Login Page\" might be broken");
 			}
-			this.buttonClick(By.xpath("//*[@title=\"Login\"]"));
+			SystemCommands.pause(2);
+			click(By.xpath("//*[@title=\"Login\"]"));
 		}	
 	}
 }

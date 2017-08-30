@@ -17,44 +17,45 @@ public class skillAssessorPage extends Page {
 	public By app=By.partialLinkText("REV-");
 	public By approveReject=By.linkText("Approve / Reject");
 	public By approve=By.xpath("//*[@title=\"Approve\"]");
-	public By newBut=By.id("createNewButton");
+	public By creNewBut=By.id("createNewButton");
 	public By sideBar=By.id("pinIndicator");
+	public By login=By.xpath("//*[@title=\"Login\"]");
 	
 	
 	public skillAssessorPage(WebDriver driverBeingUsed, String URL){
 		Page.driver=driverBeingUsed;
-		this.login(URL);
+		login(URL);
 	}
 	
 	public void approveApp(Contact reviewer, int pauseTime) {
 		SystemCommands.pause(pauseTime+2);
-		this.buttonClick(this.contacts);
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.go);
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(this.revName);
-			SystemCommands.pause(pauseTime);
+		click(contacts);
+		SystemCommands.pause(pauseTime);
+		click(go);
+		SystemCommands.pause(pauseTime);
+		click(revName);
+		SystemCommands.pause(pauseTime);
 		String lookUp=reviewer.getLastName()+", "+reviewer.getFirstName();
 		String letter=lookUp.charAt(0)+"";
-			SystemCommands.pause(pauseTime);
-		this.buttonClick(By.linkText(letter));
-			SystemCommands.pause();
+		SystemCommands.pause(pauseTime);
+		click(By.linkText(letter));
+		SystemCommands.pause();
 		boolean foundName=false;int infCount=0;
 		//Potential Infinite Loop
 		PrintStream original = System.out;
 		System.setOut(new NullPrintStream());
 		do {
 				SystemCommands.pause();
-			if(this.buttonClick(By.linkText(lookUp))) {
+			if(click(By.linkText(lookUp))) {
 				foundName=true;
 			}else {
-				if(!this.buttonClick(By.partialLinkText("Next"))) {
+				if(!click(By.partialLinkText("Next"))) {
 					if(!"A".equals(letter)) {
-						this.buttonClick(By.linkText("A"));
+						click(By.linkText("A"));
 					}else {
-						this.buttonClick(By.linkText("B"));
+						click(By.linkText("B"));
 					}
-					this.buttonClick(By.linkText(letter));
+					click(By.linkText(letter));
 						SystemCommands.pause(pauseTime);
 				}
 			}
@@ -62,17 +63,17 @@ public class skillAssessorPage extends Page {
 		}while(!foundName & infCount<100);
 		System.setOut(original);
 		if(infCount!=100) {
+			SystemCommands.pause(pauseTime);
+			closeBar();
+			SystemCommands.pause(pauseTime);
+			click(app);
+			SystemCommands.pause(pauseTime);
+			if(click(approveReject)) {
 				SystemCommands.pause(pauseTime);
-			this.closeBar();
+				click(approve);
 				SystemCommands.pause(pauseTime);
-			this.buttonClick(this.app);
-				SystemCommands.pause(pauseTime);
-			if(this.buttonClick(this.approveReject)) {
-					SystemCommands.pause(pauseTime);
-				this.buttonClick(this.approve);
-					SystemCommands.pause(pauseTime);
 			}else{
-					SystemCommands.pause(2);
+				SystemCommands.pause(2);
 			}
 		}else {
 			System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
@@ -90,7 +91,7 @@ public class skillAssessorPage extends Page {
 					System.out.println("UNEXPECTED WEBPAGE: link for \"Skills Assessor Login Page\" might be broken");
 				}
 			}
-			this.buttonClick(By.xpath("//*[@title=\"Login\"]"));
+			click(login);
 		}
 		
 	}
@@ -98,9 +99,9 @@ public class skillAssessorPage extends Page {
 	//is minimized.
 	public void closeBar() {
 		try {
-			this.buttonClick(newBut);
-			this.buttonClick(this.sideBar);
-				SystemCommands.pause();
+			click(creNewBut);
+			click(sideBar);
+			SystemCommands.pause();
 		}catch(ElementNotVisibleException e) {
 			//If it isn't visible, we are good to go!
 		}

@@ -25,10 +25,12 @@ public class SeleniumRun{
 		////Sets up the output file
 		DateFormat dateFormat = new SimpleDateFormat("MM.dd_HH.mm");
 		Date date = new Date();
+		File debugg = null;
 		try {
-	        System.setOut(new PrintStream(new File("QA_Results_"+dateFormat.format(date)+".txt")));
+			debugg = new File("QA_Results_"+dateFormat.format(date)+".txt");
+	        System.setOut(new PrintStream(debugg));
 			dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yy");
-			System.out.println("QA Automation run at: "+dateFormat.format(date));
+			System.out.println("QA Automation BEGIN run at: "+dateFormat.format(date));
 	    } catch (Exception e) {
 	         e.printStackTrace();
 	    }
@@ -44,25 +46,42 @@ public class SeleniumRun{
 		
 		
 		////***THE CODE YOU WISH TO RUN GOES HERE!***
-		
+		////
 		
 		Random rand=new Random();
 		Contact reviewer= new Contact(rand.nextInt(100000));
-		int[] add= {1};
-		//reviewer.setCOI(true);
-		//reviewer.setCOIs(add);
-		//contactToPool(driver,reviewer);
+		int[][] add;
+		//Creating COIs for reviewer
+		add= new int[2][1];
+		add[0][0]=1;add[1][0]=2;
+		//
+		reviewer.setCOIs(add);
+		contactToPool(driver,reviewer);
 		Contact newLead= new Contact(rand.nextInt(100000));
-		add= new int[2];
-		add[0]=1;add[1]=3;
-		newLead.setCOI(true);
+		//Creating COIs for newLead
+		add= new int[2][3];
+		add[0][0]=1;add[1][0]=2;
+		add[0][1]=3;add[1][1]=0;
+		add[0][2]=4;add[1][2]=1;
+		//
 		newLead.setCOIs(add);
 		createTeamLead(driver,newLead);
 		
-		
+		////
 		////***THE CODE YOU WISH TO RUN SHOULD BE FINISHED***
 		driver.close();
+		try {
+			//Puts the end signature on the file
+			date = new Date();
+			dateFormat = new SimpleDateFormat("HH:mm:ss MM/dd/yy");
+			System.out.println("QA Automation END run at: "+dateFormat.format(date));
+	        debugg.setReadOnly();
+	    } catch (Exception e) {
+	         e.printStackTrace();
+	    }
 	}
+	
+	//Primary Methods Section
 	
 	//This function is designed to take a potential reviewer/contact
 	//and automate the process from creation to successfully moving them
@@ -72,7 +91,7 @@ public class SeleniumRun{
 		//Important links.  If any of these are broken, the process will r
 		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
 		loginPage lPage;
-		int pauseTime=1;
+		int pauseTime=0;
 		lPage=new loginPage(driver, sandBoxURL);
 		createReviewer(driver,reviewer,pauseTime);
 		lPage.changeUser();
@@ -102,69 +121,79 @@ public class SeleniumRun{
 		lPage.logout();	
 		System.out.println("END: Clearing Team Lead");
 	}
+	////
 	
+	//Sub Methods Section
 	public static void createTeamLead(WebDriver driver, Contact teamLead, int pauseTime) {
-		System.out.println("BEGIN: Creating new TeamLead");
+		System.out.println('\t'+"BEGIN: Creating new TeamLead");
 		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";
 		contractorPage cPage;
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createTeamLeader(teamLead,pauseTime);
-		System.out.println("END: Creating new TeamLead");
+		System.out.println('\t'+"END: Creating new TeamLead");
 	}
 	
+	//Contractor creates the profile of a team Lead
 	public static void createTeamLeadProfile(WebDriver driver, Contact teamLead, int pauseTime) {
-		System.out.println("BEGIN: Filling out Reviewer Profile");
+		System.out.println('\t'+"BEGIN: Filling out Team Leader Profile");
 		reviewerPage rPage;
 		rPage=new reviewerPage(driver, teamLead);
 		rPage.createLeadProfile(teamLead,pauseTime);
-		System.out.println("END: Filling out Reviewer Profile");
+		System.out.println('\t'+"END: Filling out Team Leader Profile");
 	}
 	
+	//Contractor create the profile of a reviewer
 	public static void createReviewer(WebDriver driver, Contact reviewer, int pauseTime) {
-		System.out.println("BEGIN: Creating new Reviewer");
+		System.out.println('\t'+"BEGIN: Creating new Reviewer");
 		String contractorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00335000003Pu9S";
 		contractorPage cPage;
 		cPage = new contractorPage(driver,contractorURL);
 		cPage.createReviewer(reviewer,pauseTime);
-		System.out.println("END: Creating new Reviewer");
+		System.out.println('\t'+"END: Creating new Reviewer");
 	}
 	
+	//A skill assessor staff aproves an application
 	public static void skillApproval(WebDriver driver, Contact reviewer, int pauseTime) {
-		System.out.println("BEGIN: Approving Reviewer's Skills");
+		System.out.println('\t'+"BEGIN: Approving Reviewer's Skills");
 		String skillAssessorURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/00535000000UVtYAAW?noredirect=1&isUserEntityOverride=1";//Ayana Sufian
 		skillAssessorPage sPage;
 		sPage=new skillAssessorPage(driver, skillAssessorURL);
 		sPage.approveApp(reviewer,pauseTime);
-		System.out.println("END: Approving Reviewer's Skills");
+		System.out.println('\t'+"END: Approving Reviewer's Skills");
 	}
 	
+	//A reviewer creates there skills assessment ready profile
 	public static void createReviewProfile(WebDriver driver, Contact reviewer, int pauseTime) {
-		System.out.println("BEGIN: Filling out Reviewer Profile");
+		System.out.println('\t'+"BEGIN: Filling out Reviewer Profile");
 		reviewerPage rPage;
 		rPage=new reviewerPage(driver, reviewer);
 		rPage.createRevProfile(reviewer,pauseTime);
-		System.out.println("END: Filling out Reviewer Profile");
+		System.out.println('\t'+"END: Filling out Reviewer Profile");
 	}
 	
-	public static void fillOutCOI(WebDriver driver, Contact contact, int pauseTime) {
-		System.out.println("BEGIN: Filling out COI");
+	//A reviewer fills out their COI
+	public static void fillOutCOI(WebDriver driver, Contact reviewer, int pauseTime) {
+		System.out.println('\t'+"BEGIN: Filling out COI");
 		reviewerPage rPage;
-		rPage=new reviewerPage(driver, contact);
-		rPage.reviewerAddCOI(contact,pauseTime);
-		System.out.println("END: Filling out COI");
+		rPage=new reviewerPage(driver, reviewer);
+		rPage.reviewerAddCOI(reviewer,pauseTime);
+		System.out.println('\t'+"END: Filling out COI");
 	}
 	
+	//OLC Staff approves an application's COIs
 	public static void olcApprove(WebDriver driver, Contact contact, int pauseTime) {
-		System.out.println("BEGIN: Approving Reviewer COI");
+		System.out.println('\t'+"BEGIN: Approving Reviewer COI");
 		String olcStaffURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/005t0000000cWV1AAM?noredirect=1&isUserEntityOverride=1";//Ashanti Kimbrough
 		String F2orgConURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/003?rlid=RelatedContactList&id=00135000003Dfsv";
 		OLCPage olcPage;
 		olcPage=new OLCPage(driver, olcStaffURL);
 		olcPage.approveApp(contact,F2orgConURL,pauseTime);
-		System.out.println("END: Approving Reviewer COI");
+		System.out.println('\t'+"END: Approving Reviewer COI");
 	}
+	////
 	
 	
+	//Browser Setup Section
 	//Sets up a chrome browser
 	public static WebDriver chromeSetup() {
 		String chromeDriveLoc="chromedriver.exe";
@@ -182,4 +211,5 @@ public class SeleniumRun{
 		return driver;
 
 	}
+	////
 }

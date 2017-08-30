@@ -49,40 +49,40 @@ public class contractorPage extends Page{
 	public contractorPage(WebDriver driverBeingUsed, String contractorURL){
 		Page.driver=driverBeingUsed;
 		//ensure fresh login
-		this.login(contractorURL);
+		login(contractorURL);
 	}
 	
 	public void createReviewer(Contact newReviewer, int pauseTime){
 		createContact(newReviewer, pauseTime);
-		this.selectList(this.profile, "Reviewer");
+		select(profile, "Reviewer");
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.save);
+		click(save);
 		SystemCommands.pause(pauseTime);
 	}
 	
 	public void createTeamLeader(Contact teamLead, int pauseTime){
 		createContact(teamLead, pauseTime);
-		this.selectList(this.profile, 2);
+		select(profile, 2);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.save);
+		click(save);
 		SystemCommands.pause(pauseTime);
 	}
 
 	private void createContact(Contact newContact, int pauseTime) {
-		this.buttonClick(this.contacts);
+		click(contacts);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.newBut);
+		click(newBut);
 		SystemCommands.pause(pauseTime);
-		this.enterField(this.firstNameField,newContact.getFirstName());
-		this.enterField(this.lastNameField,newContact.getLastName());
-		this.enterField(this.emailField,newContact.getEmail());
-		this.enterField(this.orgNameField,"F2 Solutions LLC");
+		type(firstNameField,newContact.getFirstName());
+		type(lastNameField,newContact.getLastName());
+		type(emailField,newContact.getEmail());
+		type(orgNameField,"F2 Solutions LLC");
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.save);
+		click(save);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.portal);
+		click(portal);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.enableParnterUse);
+		click(enableParnterUse);
 		SystemCommands.pause(pauseTime);
 	}
 	
@@ -98,8 +98,8 @@ public class contractorPage extends Page{
 					System.out.println("UNEXPECTED WEBPAGE: link for \"Contractor Login Page\" might be broken");
 				}
 			}
-			this.buttonClick(this.portal);
-			this.buttonClick(this.userLog);
+			click(portal);
+			click(userLog);
 		}else {
 			System.out.println("ERROR: contractor URL is not entered as a String-This error should never be reached");
 		}

@@ -45,7 +45,7 @@ public abstract class Page {
 	//Function to click button
 	//Returns true if the button exists
 	//and was able to be clicked
-	public boolean buttonClick(By button) {
+	public boolean click(By button) {
 		if(this.elementExists(button)) {
 			try {
 			driver.findElement(button).click();
@@ -63,7 +63,7 @@ public abstract class Page {
 	//Function to enter information into a field
 	//Returns true if the field exists and information
 	//was able to be entered into it
-	public boolean enterField(By field, String input) {
+	public boolean type(By field, String input) {
 		if(this.elementExists(field)) {
 			try {
 				driver.findElement(field).sendKeys(input);
@@ -81,7 +81,7 @@ public abstract class Page {
 	//Function to select option from a picklist
 	//Returns true if the picklist exists and
 	//the option is able to be selected
-	public boolean selectList(By selectMenu,String selectOption) {
+	public boolean select(By selectMenu,String selectOption) {
 		if(this.elementExists(selectMenu)) {
 			try {
 				Select menu=new Select(driver.findElement(By.id("Profile")));
@@ -101,7 +101,7 @@ public abstract class Page {
 	}
 	
 	//**This lazier and should be avoided**
-	public boolean selectList(By selectMenu,int selectOption) {
+	public boolean select(By selectMenu,int selectOption) {
 		if(this.elementExists(selectMenu)) {
 			try{
 				Select menu=new Select(driver.findElement(selectMenu));

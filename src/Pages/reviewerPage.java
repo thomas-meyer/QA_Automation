@@ -32,6 +32,7 @@ public class reviewerPage extends Page{
 	public By submit=By.xpath("//*[@title=\"Submit for Approval\"]");
 	public By recordType=By.id("p3");
 	public By formReviewProg=By.xpath("//*[@title=\"Review Program - Available\"]");
+	//Form clickables
 	public By add=By.xpath("//*[@title=\"Add\"]");
 	public By fiscalYear=By.name("00Nt0000000SWhh");
 	public By prevExp=By.name("00N35000000aO61");
@@ -44,51 +45,53 @@ public class reviewerPage extends Page{
 	public By readCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id41");
 	public By exitCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id38");
 	public By saveCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id37");
+	//Misc Buttons
 	public By newBut=By.id("createNewButton");
 	public By sideBar=By.id("pinIndicator");
 	
 	public reviewerPage(WebDriver driverBeingUsed, Contact reviewer){
 		Page.driver=driverBeingUsed;
 		//refresh
-		this.login(reviewer);
+		login(reviewer);
 	}
 	
 	@Override
 	public void login(Object loginInfo) {
 		if(loginInfo instanceof Contact) {
 			SystemCommands.pause(2);
-			this.buttonClick(By.xpath("//*[@title=\"Contacts Tab\"]"));
-			SystemCommands.pause();
-			this.buttonClick(By.xpath("//*[@title=\"Go!\"]"));
-			SystemCommands.pause();
+			click(By.xpath("//*[@title=\"Contacts Tab\"]"));
+			SystemCommands.pause(2);
+			click(By.xpath("//*[@title=\"Go!\"]"));
+			SystemCommands.pause(2);
 			String lookUp=((Contact) loginInfo).getLastName()+", "+((Contact) loginInfo).getFirstName();
 			String letter=lookUp.charAt(0)+"";
-			this.buttonClick(By.linkText(letter));
-			SystemCommands.pause();
+			click(By.linkText(letter));
+			SystemCommands.pause(2);
 			boolean foundName=false;int infCount=0;
 			//Potential Infinite Loop
 			PrintStream original = System.out;
 			System.setOut(new NullPrintStream());
 			do {
-				SystemCommands.pause();
-				if(this.buttonClick(By.linkText(lookUp))) {
+				SystemCommands.pause(1);
+				if(click(By.linkText(lookUp))) {
 					foundName=true;
 				}else {
-					if(!this.buttonClick(By.partialLinkText("Next"))) {
+					if(!click(By.partialLinkText("Next"))) {
 						if(!"A".equals(letter)) {
-							this.buttonClick(By.linkText("A"));
+							click(By.linkText("A"));
 						}else {
-							this.buttonClick(By.linkText("B"));
+							click(By.linkText("B"));
 						}
-						this.buttonClick(By.linkText(letter));
+						click(By.linkText(letter));
 					}
 				}
 				infCount++;
 			}while(!foundName & infCount<100);
 			System.setOut(original);
+			SystemCommands.pause(2);
 			if(infCount!=100) {
-				this.buttonClick(this.portal);
-				this.buttonClick(this.userLog);
+				click(portal);
+				click(userLog);
 			}else {
 				System.out.println("LOOPING ERROR: Couldn't find \""+lookUp+"\"");
 			}
@@ -97,38 +100,38 @@ public class reviewerPage extends Page{
 	
 	public void createRevProfile(Contact reviewer, int pauseTime) {
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.reviewerProfiles);
+		click(reviewerProfiles);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.newRevPro);
+		click(newRevPro);
 		SystemCommands.pause(pauseTime);
-		this.selectList(this.recordType, 2);
-		this.buttonClick(this.continueBut);
+		select(recordType, 2);
+		click(continueBut);
 		SystemCommands.pause(pauseTime);
-		this.selectList(this.formReviewProg, 0);
-		this.buttonClick(this.add);
-		this.selectList(this.fiscalYear, 2);
+		select(formReviewProg, 0);
+		click(add);
+		select(fiscalYear, 2);
 		if(reviewer.getExp()) {
-			this.selectList(this.prevExp,1);
+			select(prevExp,1);
 		}else {
-			this.selectList(this.prevExp,2);
+			select(prevExp,2);
 		}
-		this.enterField(this.name,reviewer.getLastName()+" "+reviewer.getFirstName());
-		this.selectList(this.terms, 1);
+		type(name,reviewer.getLastName()+" "+reviewer.getFirstName());
+		select(terms, 1);
 		SystemCommands.pause(pauseTime);
 		Boolean processed=false;int infCount=0;
 		while(!processed & infCount!=300) {
 			SystemCommands.pause(1);
-			this.buttonClick(this.save);
-			if(!this.getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
+			click(save);
+			if(!getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
 				processed=true;
 			}
 			infCount++;
 		}
 		if(infCount!=300) {
 			SystemCommands.pause(pauseTime);
-			this.buttonClick(this.submit);
+			click(submit);
 			SystemCommands.pause(pauseTime);
-			this.accept();
+			accept();
 			SystemCommands.pause(pauseTime);
 		}else {
 			System.out.println("LOOPING ERROR: System couldn't find Reviewer's name.");
@@ -137,12 +140,12 @@ public class reviewerPage extends Page{
 	
 	public void reviewerAddCOI(Contact reviewer,int pauseTime) {
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.reviewerProfiles);
+		click(reviewerProfiles);
 		SystemCommands.pause(pauseTime);
-		this.closeBar();
-		this.buttonClick(this.app);
+		closeBar();
+		click(app);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.addRevCOI);
+		click(addRevCOI);
 		if(reviewer.getCOIcond()) {
 			addCOI(reviewer, pauseTime,reviewer.getCOIs());
 		}else {
@@ -151,24 +154,24 @@ public class reviewerPage extends Page{
 	}
 	
 	public void createLeadProfile(Contact teamLead, int pauseTime) {
-		this.buttonClick(this.reviewerProfiles);
+		click(reviewerProfiles);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.newRevPro);
+		click(newRevPro);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.continueBut);
+		click(continueBut);
 		SystemCommands.pause(pauseTime);
-		this.enterField(this.name,teamLead.getLastName()+" "+teamLead.getFirstName());
-		this.selectList(this.formReviewProg, 2);
+		type(name,teamLead.getLastName()+" "+teamLead.getFirstName());
+		select(formReviewProg, 2);
 		SystemCommands.pause();
-		this.buttonClick(this.add);
-		this.selectList(this.fiscalYear, 1);
-		this.selectList(this.terms, 1);
+		click(add);
+		select(fiscalYear, 1);
+		select(terms, 1);
 		SystemCommands.pause(pauseTime);
 		Boolean processed=false;int infCount=0;
 		while(!processed & infCount!=300) {
 			SystemCommands.pause(1);
-			this.buttonClick(this.save);
-			if(!this.getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
+			click(save);
+			if(!getTitle().equals("Reviewer Profile Edit: New Reviewer Profile ~ Applicant")) {
 				processed=true;
 			}
 			infCount++;
@@ -178,7 +181,7 @@ public class reviewerPage extends Page{
 		}else {
 			SystemCommands.pause(pauseTime);
 			if(teamLead.getCOIcond()) {
-				this.buttonClick(this.addLedCOI);
+				click(addLedCOI);
 				addCOI(teamLead, pauseTime,teamLead.getCOIs());
 			}else {
 				noCOI(teamLead, pauseTime);
@@ -199,43 +202,43 @@ public class reviewerPage extends Page{
 	
 	public void noCOI(Contact reviewer,int pauseTime) {
 		SystemCommands.pause(pauseTime);
-		this.selectList(this.correctCOI, 2);
-		this.selectList(this.readCOI, 1);
+		select(correctCOI, 2);
+		select(readCOI, 1);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.saveCOI);
+		click(saveCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.exitCOI);
+		click(exitCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.submit);
+		click(submit);
 		SystemCommands.pause(pauseTime);
 		try {
-			this.accept();
+			accept();
 		}catch(NoAlertPresentException e) {
 			System.out.println("After Submission, No Accept Pop-Up found.");
 		}
 	}
 	
-	public void addCOI(Contact reviewer,int pauseTime, int[] COInums) {
+	public void addCOI(Contact reviewer,int pauseTime, int[][] COInums) {
 		SystemCommands.pause(pauseTime);
-		this.selectList(this.correctCOI, 1);
-		this.selectList(this.readCOI, 1);
+		select(correctCOI, 1);
+		select(readCOI, 1);
 		//Fills out COI here
-		for(int i=0;i<COInums.length;i++) {
-			String[] COI=getCOIVal(COInums[i]);
-			this.buttonClick(By.name(COI[0]));
-			this.enterField(By.name(COI[1]), "Reason");
+		for(int i=0;i<COInums[0].length;i++) {
+			String[] COI=getCOIVal(COInums[0][i]);
+			click(By.name(COI[0]));
+			type(By.name(COI[1]), "Reason");
 			//2: Partial Ban, 3: Total Ban, 4: No Conflict
-			this.selectList(By.name(COI[2]), 2);
+			select(By.name(COI[2]), 2);
 		}	
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.saveCOI);
+		click(saveCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.exitCOI);
+		click(exitCOI);
 		SystemCommands.pause(pauseTime);
-		this.buttonClick(this.submit);
+		click(submit);
 		SystemCommands.pause(pauseTime);
 		try {
-			this.accept();
+			accept();
 		}catch(NoAlertPresentException e) {
 			System.out.println("After Submission, No Accept Pop-Up found.");
 		}
@@ -245,8 +248,8 @@ public class reviewerPage extends Page{
 	
 	public void closeBar() {
 		try {
-			this.buttonClick(newBut);
-			this.buttonClick(this.sideBar);
+			click(newBut);
+			click(sideBar);
 			SystemCommands.pause();
 		}catch(ElementNotVisibleException e) {
 			//If it isn't visible, we are good to go!
