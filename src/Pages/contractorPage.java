@@ -1,5 +1,7 @@
 package Pages;
 
+import java.io.IOException;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
@@ -46,10 +48,11 @@ public class contractorPage extends Page{
 	public By portal=By.id("workWithPortalLabel");
 	public By userLog=By.partialLinkText("Log in to Comm");
 	
-	public contractorPage(WebDriver driverBeingUsed, String contractorURL){
+	public contractorPage(WebDriver driverBeingUsed, String sandBoxURL, String contractorURL){
 		Page.driver=driverBeingUsed;
 		//ensure fresh login
-		login(contractorURL);
+		String[] loginInfo= {sandBoxURL,contractorURL};
+		login(loginInfo);
 	}
 	
 	public void createReviewer(Contact newReviewer, int pauseTime){
@@ -87,22 +90,36 @@ public class contractorPage extends Page{
 	}
 	
 	@Override
-	//loginInfo is String URL of contractor
-	public void login(Object loginInfo) {
-		if(loginInfo instanceof String) {
-			Page.driver.navigate().to((String) loginInfo);
-			if(!Page.driver.getTitle().equals("Contact: Andrew Manning ~ Salesforce - Enterprise Edition")) {
-				SystemCommands.pause(2);
-				Page.driver.navigate().to((String) loginInfo);
-				if(!Page.driver.getTitle().equals("Contact: Andrew Manning ~ Salesforce - Enterprise Edition")) {
-					System.out.println("UNEXPECTED WEBPAGE: link for \"Contractor Login Page\" might be broken");
+	protected void login(Object[] loginInfo) {
+		if(loginInfo instanceof String[]) {
+			String sandBoxURL=(String) loginInfo[0];
+			String contractorURL=(String) loginInfo[1];
+			//Salesforce Admin Login
+			if(!webPage(sandBoxURL,"Login "+'|'+" Salesforce")) {
+					System.out.println("LOGIN ERROR: remember to logout, before logging back in");
+				}else {
+				try {
+					String[] creditials=SystemCommands.getLoginCred();
+					type(By.id("username"), creditials[0]);
+					type(By.id("password"), creditials[1]);
+				}catch(IOException f) {
+					System.out.println("MISSING FILE: couldn't find \"loginInfo.txt\"");
 				}
+				click(By.id("Login"));
 			}
+			//Contractor Login
+			webPage(contractorURL,"Contact: Andrew Manning ~ Salesforce - Enterprise Edition");
 			click(portal);
 			click(userLog);
 		}else {
-			System.out.println("ERROR: contractor URL is not entered as a String-This error should never be reached");
+			System.out.println("ERROR: Program is corrupted");
 		}
+	}
+
+	@Override
+	public void logout() {
+		click(By.id("userNavLabel"));
+		click(By.xpath("//*[@title=\"Logout\"]"));
 	}
 
 

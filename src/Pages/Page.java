@@ -5,7 +5,11 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+
+import AutomationFramework.SystemCommands;
 
 //Page is an abstract class that serves as the foundations for all of our Selenium integrated classes.
 //The functions here are applied to all of our class and have built in debugging.
@@ -16,8 +20,10 @@ public abstract class Page {
 
 	//A login method is required for all pages.  However since the login method isn't universal
 	//it is not explicitly define in this class, but rather left up to the other classes to define.
-	public abstract void login(Object loginInfo);
+	protected abstract void login(Object[] loginInfo);
 
+	public abstract void logout();
+	
 	//Returns the header of a webpage
 	//This is useful for verifying that
 	//you have navigated to the proper webpage
@@ -53,6 +59,9 @@ public abstract class Page {
 			}catch(UnsupportedCommandException e) {
 				System.out.println("FAILED TO CLICK: ("+button.toString()+")");
 				return false;
+			}catch(WebDriverException w) {
+				System.out.println("FAILED TO CLICK: ("+button.toString()+")");
+				return false;
 			}
 		}else {
 			System.out.println(" \"clickable button\"");
@@ -66,9 +75,13 @@ public abstract class Page {
 	public boolean type(By field, String input) {
 		if(this.elementExists(field)) {
 			try {
+				driver.findElement(field).clear();
 				driver.findElement(field).sendKeys(input);
 				return true;
 			}catch(UnsupportedCommandException e) {
+				System.out.println("FAILED TO ENTER information into the field: ("+field.toString()+")");
+				return false;
+			}catch(WebDriverException w) {
 				System.out.println("FAILED TO ENTER information into the field: ("+field.toString()+")");
 				return false;
 			}
@@ -84,13 +97,16 @@ public abstract class Page {
 	public boolean select(By selectMenu,String selectOption) {
 		if(this.elementExists(selectMenu)) {
 			try {
-				Select menu=new Select(driver.findElement(By.id("Profile")));
-				menu.selectByVisibleText("Reviewer");
+				Select menu=new Select(driver.findElement(selectMenu));
+				menu.selectByVisibleText(selectOption);
 				return true;
 			}catch(NoSuchElementException e) {
 				System.out.println("FAILED TO SELECT VALUE: \""+selectOption+"\" from the picklist ("+selectMenu.toString()+")");
 				return false;
 			}catch(UnsupportedCommandException e) {
+				System.out.println("FAILED TO SELECT: ("+selectMenu.toString()+")");
+				return false;
+			}catch(WebDriverException w) {
 				System.out.println("FAILED TO SELECT: ("+selectMenu.toString()+")");
 				return false;
 			}
@@ -113,6 +129,51 @@ public abstract class Page {
 			}
 		}else {
 			System.out.println(" \"picklist\"");
+			return false;
+		}
+	}
+	
+	public boolean dragNdrop(By pickup,By dropLoc) {
+		Actions act = new Actions(Page.driver);
+		if(elementExists(pickup) & elementExists(dropLoc)) {
+			act.dragAndDrop(Page.driver.findElement(pickup), Page.driver.findElement(dropLoc)).perform();
+			return true;
+		}else {
+			System.out.println("EXECUTION ERROR");
+			return false;
+		}
+
+
+	}
+	
+	public boolean webPage(String websiteURL, String expectedHeading) {
+		if(driver!=null) {
+				try{
+					driver.navigate().to(websiteURL);
+				if(driver.getTitle().equals(expectedHeading)) {
+					return true;
+				}else {
+					System.out.println("FAILED TO NAVIGATE to \""+expectedHeading+"\".  TRYING AGAIN");
+					SystemCommands.pause(2);
+					if(driver.getTitle().equals(expectedHeading)) {
+						return true;
+					}else {
+						System.out.println("FAILED TO NAVIGATE to \""+expectedHeading+"\".  TRYING AGAIN");
+						SystemCommands.pause(2);
+						if(driver.getTitle().equals(expectedHeading)) {
+							return true;
+						}else {
+							System.out.println("FAILED TO NAVIGATE to \""+expectedHeading+"\".");
+							return false;
+						}
+					}
+				}
+			}catch(WebDriverException e) {
+				System.out.println("URL ERROR: verify that URL starts with http:\\\\");
+				return false;
+			}
+		}else {
+			System.out.print("BROWSER NOT AVALIBLE");
 			return false;
 		}
 	}

@@ -12,7 +12,7 @@ import AutomationFramework.Contact;
 import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
 
-public class reviewerPage extends Page{
+public class teamLeaderPage extends Page{
 
 	
 	public By home=By.linkText("Home");
@@ -40,7 +40,6 @@ public class reviewerPage extends Page{
 	public By name=By.id("CF00Nt0000000SWKG");
 	public By terms=By.name("00Nt0000000SgVo");
 	public By app=By.partialLinkText("REV-");//This is sloppy
-	public By review=By.partialLinkText("SC-");//extremely sloppy
 	public By addRevCOI=By.name("new_applicant_list_identify_conflicts");
 	public By addLedCOI=By.name("pending_application");
 	public By correctCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id40:j_id42");
@@ -50,14 +49,19 @@ public class reviewerPage extends Page{
 	//Misc Buttons
 	public By newBut=By.id("createNewButton");
 	public By sideBar=By.id("pinIndicator");
-	public By go=By.name("go");
-
+	
+	//Team Leader Buttons
+	public By appAssign=By.linkText("Application Assignment");
+	public By pickTeam=By.id("j_id0:j_id2:j_id28:j_id29:j_id30:team");
+	public By go=By.id("//*[@title=\"submit\"]");
+	public By scoreSelect=By.id("fcf");
+	public By teamLevAssignSelect=By.id("j_id0:j_id2:j_id28:j_id29:j_id30:team");
 
 	
 	
-	public reviewerPage(WebDriver driverBeingUsed, String sandboxURL, Contact reviewer){
+	public teamLeaderPage(WebDriver driverBeingUsed, String sandboxURL, Contact teamLeader){
 		Page.driver=driverBeingUsed;
-		Object[] loginInfo= {sandboxURL,reviewer};
+		Object[] loginInfo= {sandboxURL,teamLeader};
 		//refresh
 		login(loginInfo);
 	}
@@ -127,26 +131,20 @@ public class reviewerPage extends Page{
 		click(By.id("userNavLabel"));
 		click(By.xpath("//*[@title=\"Logout\"]"));
 	}
-
-	//Reviewer Actions
-	public void createRevProfile(Contact reviewer, int pauseTime) {
-		SystemCommands.pause(pauseTime);
+	
+	//Team Lead Actions
+	public void createLeadProfile(Contact teamLead, int pauseTime) {
 		click(reviewerProfiles);
 		SystemCommands.pause(pauseTime);
 		click(newRevPro);
 		SystemCommands.pause(pauseTime);
-		select(recordType, 2);
 		click(continueBut);
 		SystemCommands.pause(pauseTime);
-		select(formReviewProg, 0);
+		type(name,teamLead.getLastName()+" "+teamLead.getFirstName());
+		select(formReviewProg, 2);
+		SystemCommands.pause();
 		click(add);
-		select(fiscalYear, 2);
-		if(reviewer.getExp()) {
-			select(prevExp,1);
-		}else {
-			select(prevExp,2);
-		}
-		type(name,reviewer.getLastName()+" "+reviewer.getFirstName());
+		select(fiscalYear, 1);
 		select(terms, 1);
 		SystemCommands.pause(pauseTime);
 		Boolean processed=false;int infCount=0;
@@ -158,41 +156,28 @@ public class reviewerPage extends Page{
 			}
 			infCount++;
 		}
-		if(infCount!=300) {
-			SystemCommands.pause(pauseTime);
-			click(submit);
-			SystemCommands.pause(pauseTime);
-			accept();
-			SystemCommands.pause(pauseTime);
-		}else {
+		if(infCount==300) {
 			System.out.println("LOOPING ERROR: System couldn't find Reviewer's name.");
-		}
-	}
-	
-	public void reviewerAddCOI(Contact reviewer,int pauseTime) {
-		SystemCommands.pause(pauseTime);
-		click(reviewerProfiles);
-		SystemCommands.pause(pauseTime);
-		closeBar();
-		click(app);
-		SystemCommands.pause(pauseTime);
-		click(addRevCOI);
-		if(reviewer.getCOIcond()) {
-			addCOI(reviewer, pauseTime,reviewer.getCOIs());
 		}else {
-			noCOI(reviewer, pauseTime);
+			SystemCommands.pause(pauseTime);
+			if(teamLead.getCOIcond()) {
+				click(addLedCOI);
+				addCOI(teamLead, pauseTime,teamLead.getCOIs());
+			}else {
+				noCOI(teamLead, pauseTime);
+			}
+			SystemCommands.pause(pauseTime);
 		}
 	}
 	
-	public void doAReview(int pauseTime) {
-		click(home);
+	public void grantAcess(int pauseTime) {
+		openBar();
 		SystemCommands.pause(pauseTime);
-		click(review);
+		click(appAssign);
 		SystemCommands.pause(pauseTime);
-		
-		
+		select(teamLevAssignSelect,"ALL");
 	}
-	
+
 	public String[] getCOIVal(int rowNum) {
 		String[] result={"pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:pbtApplicationUpdate:"+rowNum+":j_id45"
 			,"pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:pbtApplicationUpdate:"+rowNum+":j_id51"
@@ -220,6 +205,15 @@ public class reviewerPage extends Page{
 			System.out.println("After Submission, No Accept Pop-Up found.");
 		}
 	}
+	
+	public By getAssignedDate(int num) {
+		return By.id("j_id0:j_id2:j_id28:j_id36:j_id41:"+num+":j_id43");
+	}
+	
+	public void assignScoreCards() {
+		
+	}
+	
 	//everyone actions
 	public void addCOI(Contact reviewer,int pauseTime, int[][] COInums) {
 		SystemCommands.pause(pauseTime);
@@ -259,7 +253,6 @@ public class reviewerPage extends Page{
 	
 	public void openBar() {
 		try {
-			click(newBut);
 			click(newBut);
 			//If it's already visible, you are good to go!
 		}catch(ElementNotVisibleException e) {

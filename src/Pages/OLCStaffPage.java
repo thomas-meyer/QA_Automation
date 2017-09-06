@@ -1,5 +1,6 @@
 package Pages;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.openqa.selenium.By;
@@ -9,7 +10,7 @@ import AutomationFramework.Contact;
 import AutomationFramework.NullPrintStream;
 import AutomationFramework.SystemCommands;
 
-public class OLCPage extends Page{
+public class OLCStaffPage extends Page{
 	public By app=By.partialLinkText("REV-");
 	public By approveReject=By.linkText("Approve / Reject");
 	public By approveApp=By.xpath("//*[@title=\"Approve\"]");
@@ -22,9 +23,10 @@ public class OLCPage extends Page{
 	public By exitCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id38");
 	public By saveCOI=By.name("pgApplicationUpdate:frmApplicationUpdate:pbApplicationUpdate:j_id36:j_id37");
 	
-	public OLCPage(WebDriver driverBeingUsed, String URL) {
+	public OLCStaffPage(WebDriver driverBeingUsed, String sandBoxURL, String OLCstaffURL){
 		Page.driver=driverBeingUsed;
-		login(URL);
+		String[] loginInfo= {sandBoxURL,OLCstaffURL};
+		login(loginInfo);
 	}
 
 
@@ -157,15 +159,35 @@ public class OLCPage extends Page{
 	}
 
 	@Override
-	public void login(Object loginInfo) {
-		if(loginInfo instanceof String) {
-			Page.driver.navigate().to((String) loginInfo);
-			SystemCommands.pause(2);
-			if(!Page.driver.getTitle().equals("User: Ashanti Kimbrough ~ Salesforce - Enterprise Edition")) {
-				System.out.println("UNEXPECTED WEBPAGE: link for \"OLC Login Page\" might be broken");
+	public void login(Object[] loginInfo) {
+		if(loginInfo instanceof String[]) {
+			String sandBoxURL=(String) loginInfo[0];
+			String OLCstaffURL=(String) loginInfo[1];
+			//Salesforce Admin Login
+			if(!webPage(sandBoxURL,"Login "+'|'+" Salesforce")) {
+					System.out.println("LOGIN ERROR: remember to logout, before logging back in");
+				}else {
+				try {
+					String[] creditials=SystemCommands.getLoginCred();
+					type(By.id("username"), creditials[0]);
+					type(By.id("password"), creditials[1]);
+				}catch(IOException f) {
+					System.out.println("MISSING FILE: couldn't find \"loginInfo.txt\"");
+				}
+				click(By.id("Login"));
 			}
-			SystemCommands.pause(2);
+			//Contractor Login
+			webPage(OLCstaffURL,"User: Ashanti Kimbrough ~ Salesforce - Enterprise Edition");
 			click(By.xpath("//*[@title=\"Login\"]"));
-		}	
+		}else {
+			System.out.println("ERROR: Program is corrupted");
+		}
+	}
+
+
+	@Override
+	public void logout() {
+		click(By.id("userNavLabel"));
+		click(By.xpath("//*[@title=\"Logout\"]"));
 	}
 }
