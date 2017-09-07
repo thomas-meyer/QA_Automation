@@ -44,14 +44,23 @@ public class NMTC {
 		System.out.println("End: Generating Teams");
 	}
 	
-	public static void grantAndCOmpleteScore(WebDriver driver, Contact mainLead, int pauseTime) {
+	public static void grantAndCompleteScore(WebDriver driver, Contact mainLead, int pauseTime) {
 		System.out.println("BEGIN: Scorecard Granting and Completing");
 		System.out.println("BEGIN: Generating Teams");
 		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
 		teamLeaderPage tPage;
 		tPage=new teamLeaderPage(driver,sandBoxURL,mainLead);
-		tPage.grantAcess(pauseTime);
+		tPage.grantAccess(5,pauseTime);
 		System.out.println("End: Scorecard Granting and Completing");
+	}
+	
+	public static void FillOutScorecard(WebDriver driver, Contact reviewer, int pausetime) {
+		System.out.println("BEGIN: Filling out Scorecard");
+		String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
+		reviewerPage rPage;
+		rPage=new reviewerPage(driver,sandBoxURL,reviewer);
+		rPage.fillOutScoreCard(pausetime);
+		System.out.println("End: Filling out Scorecard");
 	}
 	
 	//Sub Methods Section

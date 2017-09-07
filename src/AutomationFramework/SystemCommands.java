@@ -40,13 +40,13 @@ public class SystemCommands {
 	}
 	
 	//Allows you to pause for a inputed amount of time
-	public static void pause(int num) {
+	public static void pause(double num) {
 		if(num!=0) {
 			try {
 				//This is a hard-coded number and can be changed
 				//on user preference
 				//NOTE: errors have been encountered below 100
-				Thread.sleep(num*1000);
+				Thread.sleep((long) (num*1000));
 			} catch (InterruptedException e) {
 				//The Interruption Exception should never be thrown
 			}

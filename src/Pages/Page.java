@@ -171,6 +171,9 @@ public abstract class Page {
 			}catch(WebDriverException e) {
 				System.out.println("URL ERROR: verify that URL starts with http:\\\\");
 				return false;
+			}catch(NullPointerException e) {
+				System.out.println("URL ERROR: verify that URL starts with http:\\\\");
+				return false;
 			}
 		}else {
 			System.out.print("BROWSER NOT AVALIBLE");
@@ -185,6 +188,28 @@ public abstract class Page {
 		}catch(NoAlertPresentException e) {
 			System.out.println("EXPECTED ALERT: no alert detected");
 		}
+	}
+	
+	//public boolean tab(String tabTitle) {
+		
+	//}
+	
+	public String linkLocation(By link) {
+		if(elementExists(link)) {
+			try{
+				String result=driver.findElement(link).getAttribute("hef");
+				if(result!=null) {
+					return result;
+				}else {
+					System.out.println("LINK ERROR: couldn't retrieve link address");
+					return " ";
+				}
+			}catch(WebDriverException e) {
+				System.out.println("LINK ERROR: couldn't retrieve link address");
+				return " ";
+			}
+		}
+		return " ";
 	}
 	
 }

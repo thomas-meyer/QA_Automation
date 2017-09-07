@@ -53,9 +53,10 @@ public class teamLeaderPage extends Page{
 	//Team Leader Buttons
 	public By appAssign=By.linkText("Application Assignment");
 	public By pickTeam=By.id("j_id0:j_id2:j_id28:j_id29:j_id30:team");
-	public By go=By.id("//*[@title=\"submit\"]");
+	public By go=By.name("j_id0:j_id2:j_id28:j_id29:j_id30:go");
 	public By scoreSelect=By.id("fcf");
 	public By teamLevAssignSelect=By.id("j_id0:j_id2:j_id28:j_id29:j_id30:team");
+	public By saveChan=By.id("j_id0:j_id2:j_id28:j_id29:j_id32:save");;
 
 	
 	
@@ -170,12 +171,33 @@ public class teamLeaderPage extends Page{
 		}
 	}
 	
-	public void grantAcess(int pauseTime) {
+	public void grantAccess(int teamNum, int pauseTime) {
 		openBar();
 		SystemCommands.pause(pauseTime);
 		click(appAssign);
 		SystemCommands.pause(pauseTime);
-		select(teamLevAssignSelect,"ALL");
+		select(teamLevAssignSelect,1);
+		SystemCommands.pause(pauseTime);
+		click(go);
+		for(int i=0;i<teamNum;i++) {
+			SystemCommands.pause(pauseTime);
+			for(int j=1;j<5;j++) {
+				type(By.name("j_id0:j_id2:j_id28:j_id36:j_id41:"+j+":j_id43"),"10/10/2017");
+				SystemCommands.pause(pauseTime);
+				select(By.name("j_id0:j_id2:j_id28:j_id36:j_id41:"+j+":j_id45:0:j_id47"),"Granted");
+				SystemCommands.pause(pauseTime);
+				select(By.name("j_id0:j_id2:j_id28:j_id36:j_id41:"+j+":j_id45:1:j_id47"),"Granted");
+				SystemCommands.pause(pauseTime);
+				select(By.name("j_id0:j_id2:j_id28:j_id36:j_id41:"+j+":j_id45:2:j_id47"),"Granted");
+				SystemCommands.pause(pauseTime);
+			}
+			click(saveChan);
+			SystemCommands.pause(pauseTime);
+			select(teamLevAssignSelect,i+1);
+			SystemCommands.pause(pauseTime);
+			click(go);
+			
+		}
 	}
 
 	public String[] getCOIVal(int rowNum) {
@@ -212,6 +234,10 @@ public class teamLeaderPage extends Page{
 	
 	public void assignScoreCards() {
 		
+	}
+	
+	public void reviseDueDate(int row, int column, String date) {
+		type(By.id("j_id0:j_id2:j_id28:j_id36:j_id41:"+row+":j_id45:"+column+":j_id52"),date);
 	}
 	
 	//everyone actions

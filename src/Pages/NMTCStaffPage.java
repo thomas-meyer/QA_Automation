@@ -178,8 +178,7 @@ public class NMTCStaffPage extends Page {
 	public By getAltTeamLeadSelect(int teamNum) {
 		return By.name("j_id0:j_id2:masterForm:mainForm:j_id44:"+teamNum+":j_id60");
 	}
-	
-	
+		
 	public void selectDueDate(String Team,int number,int day,int month,int year) {
 		if(Team.equals("A")) {
 			type(By.id("j_id0:j_id2:j_id3:mainForm:j_id35:"+number+":j_id37"),month+"/"+day+"/"+year);
@@ -188,13 +187,6 @@ public class NMTCStaffPage extends Page {
 			type(By.id("j_id0:j_id2:j_id3:mainForm:j_id35:"+number+":j_id39"),month+"/"+day+"/"+year);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	//Ensures that the "convenient" side-bar
 	//is minimized.

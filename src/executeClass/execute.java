@@ -49,10 +49,8 @@ public class execute{
 		//String sandBoxURL="https://cdfi1--cdfiqa01.cs33.my.salesforce.com/?ec=302&startURL=%2Fhome%2Fhome.jsp";
 		//new loginPage(driver, sandBoxURL);
 		
-		Contact teamLead= new Contact("James","Decker");
-		teamLead.setCOI(false);
-		teamLead.setExp(true);
-		NMTC.createTeam(driver,teamLead,1);
+		Contact reviewer= new Contact("Manual","Labor");
+		NMTC.FillOutScorecard(driver, reviewer, 1);
 		/*
 		Random rand=new Random();
 		Contact reviewer= new Contact(rand.nextInt(100000));
@@ -77,7 +75,8 @@ public class execute{
 		////
 		////
 		////***THE CODE YOU WISH TO RUN SHOULD BE FINISHED***
-		driver.close();
+		
+		//driver.close();
 		try {
 			//Puts the end signature on the file
 			date = new Date();

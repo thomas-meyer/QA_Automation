@@ -51,7 +51,9 @@ public class reviewerPage extends Page{
 	public By newBut=By.id("createNewButton");
 	public By sideBar=By.id("pinIndicator");
 	public By go=By.name("go");
-
+	public By startRevi=By.name("new_view_scorecard");
+	
+		
 
 	
 	
@@ -268,6 +270,124 @@ public class reviewerPage extends Page{
 		}
 	}
 
+	public void fillOutScoreCard(int pauseTime) {
+		click(scorecards);
+		SystemCommands.pause(pauseTime);
+		click(go);
+		SystemCommands.pause(pauseTime);
+		click(review);
+		SystemCommands.pause(pauseTime);
+		click(startRevi);
+		//tab("ScoreCard Page");
+		SystemCommands.pause(pauseTime);
+		for(int i=1;i<58;i++) {
+			answerQuestion(i,1);
+		}
+		click(By.id("j_id0:thecard:j_id30"));
+		//click(By.id("j_id0:thecard:j_id32"));
+	}
 	
+	public void answerQuestion(int questionNumber, int selectAnswer) {
+		try {
+			double hesitate=.04;
+			SystemCommands.pause(hesitate);
+			//BS=Business Strat
+			By BS=By.id("BusinessStrategySection");
+			By[] BSsub= {By.id("BusinessStrategyProductsServicesandInvestmentCriteriaSubsection"),
+					By.id("BusinessStrategyProjectedBusinessActivitiesSubsection"),
+					By.id("BusinessStrategyPriorPerformanceSubsection"),
+					By.id("BusinessStrategyPriorPerformanceandProjectedBusinessActivitySubsection"),
+					By.id("BusinessStrategyNotableRelationshipsSubsection")};
+			int[] BSa= {1,7,13,15,17,18};
+			for(int i=0;i<BSa.length-1;i++) {
+				if(questionNumber>BSa[i]-1 & questionNumber<BSa[i+1]) {
+					click(BS);
+					SystemCommands.pause(hesitate);
+					click(BSsub[i]);
+					SystemCommands.pause(hesitate);
+					answerField(hesitate, 0,i, questionNumber, selectAnswer);
+					click(BS);
+					SystemCommands.pause(hesitate);
+				}
+			}
+			By PP=By.id("PriorityPointsSection");
+			By[] PPsub= {By.id("PriorityPointsPriorityPointsExperienceSubsection"),
+				By.id("PriorityPointsPriorityPointsPercentageSubsection")};
+			int[] PPa= {18,19,20};
+			for(int i=0;i<PPa.length-1;i++) {
+				if(questionNumber>PPa[i]-2 & questionNumber<PPa[i+1]) {
+					click(PP);
+					SystemCommands.pause(hesitate);
+					click(PPsub[i]);
+					SystemCommands.pause(hesitate);
+					answerField(hesitate, 1,i, questionNumber, selectAnswer);
+					click(PP);
+					SystemCommands.pause(hesitate);
+				}
+			}	
+			By CO=By.id("CommunityOutcomesSection");
+			By[] COsub= {By.id("CommunityOutcomesTargetingAreasofHigherDistressSubsection"),
+				By.id("CommunityOutcomesJobRelatedCommunityOutcomesSubsection"),
+				By.id("CommunityOutcomesGoodsServicesinLICsSubsection"),
+				By.id("CommunityOutcomesFinancingMinorityBusinesses"+'/'+"HousingSubsection"),//button seems to fail
+				By.id("CommunityOutcomesAdditionalCommunityDevelopmentOutcomesSubsection"),
+				By.id("CommunityOutcomesTrackingCommunityOutcomesSubsection"),
+				By.id("CommunityOutcomesCommunityAccountabilityandInvolvementSubsection"),
+				By.id("CommunityOutcomesOtherCommunityBenefitsSubsection")};//button seems to fail
+			int[] COa= {20,22,29,36,40,46,47,51,53};
+			for(int i=0;i<COa.length-1;i++) {
+				if(questionNumber>COa[i]-2 & questionNumber<COa[i+1]) {
+					click(CO);
+					SystemCommands.pause(hesitate);
+					click(COsub[i]);
+					SystemCommands.pause(hesitate);
+					answerField(hesitate, 2,i, questionNumber, selectAnswer);
+					click(CO);
+					SystemCommands.pause(hesitate);
+				}
+			}
+			By R=By.id("RecommendationSection");
+			By[] Rsub= {By.id("RecommendationRecommendorgreceiveallocationSubsection")};
+			int[] Ra= {53,54};
+			for(int i=0;i<Ra.length-1;i++) {
+				if(questionNumber>Ra[i]-2 & questionNumber<Ra[i+1]) {
+					click(R);
+					SystemCommands.pause(hesitate);
+					click(Rsub[i]);
+					SystemCommands.pause(hesitate);
+					answerField(hesitate, 3,i, questionNumber, selectAnswer);
+					click(R);
+					SystemCommands.pause(hesitate);
+				}
+			}
+			By PI=By.id("PanelIssuesSection");
+			By[] PIsub= {By.id("PanelIssuesPanelIssues1Subsection"),
+				By.id("PanelIssuesPanelIssues2Subsection"),
+				By.id("PanelIssuesPanelIssues3Subsection"),
+				By.id("PanelIssuesPanelIssues4Subsection")};
+			int[] PIa= {54,55,56,57,58};
+			for(int i=0;i<PIa.length-2;i++) {
+				if(questionNumber>PIa[i]-2 & questionNumber<PIa[i+1]) {
+					click(PI);
+					SystemCommands.pause(hesitate);
+					click(PIsub[i]);
+					SystemCommands.pause(hesitate);
+					answerField(hesitate, 4,i, questionNumber, selectAnswer);
+					SystemCommands.pause(hesitate);
+					click(PI);
+					SystemCommands.pause(hesitate);
+				}
+			}
+		}catch(ArrayIndexOutOfBoundsException e) {
+			System.out.print("ACCESS ERROR: Trid to select a question that doesn't exist");
+		}
+	}
 	
+	public void answerField(double hesitate, int categoryNum, int subCategoryNum, int questionNumber, int selectAnswer) {
+		By radio=By.id("j_id0:thecard:j_id63:"+categoryNum+":j_id65:"+subCategoryNum+":j_id67:"+(questionNumber-1)+":j_id80:"+(selectAnswer-1));
+		click(radio);
+		By info=By.name("j_id0:thecard:j_id63:"+categoryNum+":j_id65:"+subCategoryNum+":j_id67:"+(questionNumber-1)+":j_id99");
+		type(info,"reason");
+		SystemCommands.pause(hesitate);
+	}
 }
